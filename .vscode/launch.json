@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "template-vscode-extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "env": {
+        "NODE_ENV": "dev"
+      },
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/dist",
+        "--disable-extensions"
+      ]
+    }
+  ]
+}
+

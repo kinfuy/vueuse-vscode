@@ -1,0 +1,48 @@
+{
+  "name": "VueUse",
+  "version": "0.0.1",
+  "description": "VueUse tooling for VS Code",
+  "keywords": [
+    "vscode",
+    "extension"
+  ],
+  "license": "MIT",
+  "author": "alqmc",
+  "main": "extension.js",
+  "publisher": "alqmc",
+  "activationEvents": [
+    "onLanguage:vue",
+    "onLanguage:js",
+    "onLanguage:ts"
+  ],
+  "categories": [
+    "Snippets",
+    "Other"
+  ],
+  "devDependencies": {
+    "@types/vscode": "^1.67.0",
+    "fast-glob": "^3.2.11",
+    "fs-extra": "^10.1.0"
+  },
+  "engines": {
+    "vscode": "^1.67.0"
+  },
+  "icon": "public/logo.png",
+  "contributes": {
+    "languages": [
+      {
+        "id": "vue",
+        "extensions": [
+          ".vue"
+        ]
+      }
+    ],
+    "configuration": {},
+    "snippets": [],
+    "commands": [],
+    "menus": {},
+    "viewsContainers": {},
+    "views": {},
+    "viewsWelcome": []
+  }
+}

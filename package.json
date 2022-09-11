@@ -1,0 +1,38 @@
+{
+  "name": "VueUse",
+  "description": "VueUse tooling for VS Code",
+  "author": "alqmc",
+  "keywords": [],
+  "license": "MIT",
+  "scripts": {
+    "build": "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts vscode",
+    "watch": "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts watchVscode",
+    "pkg": "cd dist && vsce package",
+    "push": "git push gitee master && git push github master",
+    "update:version": "sucrase-node build/version.ts",
+    "clear": "rimraf dist",
+    "prepare": "husky install",
+    "log": "changeloger",
+    "lint:js": "eslint -c ./.eslintrc.js --fix --ext .jsx,.js,.vue \"src/**/*.{jsx,js,vue}\" "
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@alqmc/build-ts": "^0.0.8",
+    "@alqmc/build-utils": "^0.0.5",
+    "@alqmc/eslint-config": "^0.0.4",
+    "@commitlint/cli": "^9.1.2",
+    "@commitlint/config-angular": "^8.3.4",
+    "@commitlint/config-conventional": "^9.1.2",
+    "@types/gulp": "^4.0.9",
+    "@types/vscode": "^1.67.0",
+    "changeloger": "0.1.0",
+    "gulp": "^4.0.2",
+    "husky": "^8.0.1",
+    "kolorist": "^1.5.1",
+    "lint-staged": "^10.5.4",
+    "prettier": "^2.6.2",
+    "rimraf": "^3.0.2",
+    "sucrase": "^3.20.3",
+    "typescript": "^4.6.3"
+  }
+}
