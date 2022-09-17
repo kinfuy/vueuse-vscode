@@ -15,24 +15,35 @@
     "log": "changeloger",
     "lint:js": "eslint -c ./.eslintrc.js --fix --ext .jsx,.js,.vue \"src/**/*.{jsx,js,vue}\" "
   },
-  "dependencies": {},
+  "dependencies": {
+    "vue": "^3.2.39"
+  },
   "devDependencies": {
     "@alqmc/build-ts": "^0.0.8",
     "@alqmc/build-utils": "^0.0.5",
+    "@alqmc/build-vue": "^0.0.7",
     "@alqmc/eslint-config": "^0.0.4",
     "@commitlint/cli": "^9.1.2",
     "@commitlint/config-angular": "^8.3.4",
     "@commitlint/config-conventional": "^9.1.2",
+    "@rollup/plugin-replace": "^4.0.0",
     "@types/gulp": "^4.0.9",
+    "@types/gulp-autoprefixer": "^0.0.33",
+    "@types/gulp-clean-css": "^4.3.0",
+    "@types/gulp-less": "^0.0.32",
     "@types/vscode": "^1.67.0",
     "changeloger": "0.1.0",
     "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^8.0.0",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-less": "^5.0.0",
     "husky": "^8.0.1",
     "kolorist": "^1.5.1",
     "lint-staged": "^10.5.4",
     "prettier": "^2.6.2",
     "rimraf": "^3.0.2",
     "sucrase": "^3.20.3",
-    "typescript": "^4.6.3"
+    "typescript": "^4.6.3",
+    "vite": "^3.1.0"
   }
 }

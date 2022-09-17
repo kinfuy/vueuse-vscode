@@ -12,8 +12,9 @@
   "publisher": "alqmc",
   "activationEvents": [
     "onLanguage:vue",
-    "onLanguage:js",
-    "onLanguage:ts"
+    "onLanguage:javascript",
+    "onLanguage:teptscript",
+    "onView:docslibs"
   ],
   "categories": [
     "Snippets",
@@ -39,10 +40,65 @@
     ],
     "configuration": {},
     "snippets": [],
-    "commands": [],
-    "menus": {},
-    "viewsContainers": {},
-    "views": {},
-    "viewsWelcome": []
+    "commands": [
+      {
+        "command": "VueUse.previewMd",
+        "title": "预览md文档"
+      },
+      {
+        "command": "VueUse.search",
+        "title": "检索方法"
+      },
+      {
+        "command": "VueUse.refreshEntry",
+        "title": "刷新",
+        "icon": {
+          "light": "public/refresh-light.svg",
+          "dark": "public/refresh-dark.svg"
+        }
+      }
+    ],
+    "menus": {
+      "view/item/context": [],
+      "view/title": [
+        {
+          "command": "VueUse.refreshEntry",
+          "when": "view == docslibs",
+          "group": "navigation"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "docshome",
+          "title": "VueUse",
+          "icon": "public/logo.svg"
+        }
+      ]
+    },
+    "views": {
+      "docshome": [
+        {
+          "id": "docssearch",
+          "type": "webview",
+          "name": "VueUse"
+        },
+        {
+          "id": "docslibs",
+          "name": "函数库"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "docssearch",
+        "contents": "暂无数据"
+      },
+      {
+        "view": "docslibs",
+        "contents": "暂无数据"
+      }
+    ]
   }
 }
