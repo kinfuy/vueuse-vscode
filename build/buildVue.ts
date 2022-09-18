@@ -8,8 +8,8 @@ const buildVueConfig: DefineVueConfig = {
   baseOptions: {
     input: resolve(enterPath, 'views/search-view/main.ts'),
     outPutPath: resolve(outputPath, 'views'),
-    pkgPath: resolve(rootPath, 'package.json'),
-    enterPath: resolve(enterPath, 'popup'),
+    pkgPath: resolve(enterPath, 'package.json'),
+    enterPath,
     tsConfigPath: resolve(rootPath, 'tsconfig.json'),
     preserveModules: false,
     extraOptions: {

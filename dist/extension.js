@@ -74,6 +74,7 @@ const getConfigJson = async (rootPath) => {
 };
 
 class SilderView {
+  searchValue = "";
   constructor() {
   }
   getTreeItem(node) {
@@ -84,7 +85,8 @@ class SilderView {
     return new Promise((resolve2) => {
       if (node) {
         this.getFunction(functionFile).then((treeNode) => {
-          resolve2(treeNode);
+          if (this.searchValue)
+            resolve2(treeNode);
         });
       } else {
         let count = 0;
@@ -119,10 +121,14 @@ class SilderView {
         }
         count++;
         if (count === functionFile.length) {
-          resolve2(treeNode);
+          resolve2(treeNode.filter((x) => x.name.includes(this.searchValue)));
         }
       });
     });
+  }
+  search(msg) {
+    this.searchValue = msg.searchValue;
+    this.refresh();
   }
   _onDidChangeTreeData = new vscode__namespace.EventEmitter();
   onDidChangeTreeData = this._onDidChangeTreeData.event;
@@ -135,8 +141,10 @@ class SilderViewItem extends vscode__namespace.TreeItem {
   exportSize;
   lastChnage;
   related;
+  name;
   constructor(options) {
     super(options.name, options.collapsibleState);
+    this.name = options.name;
     this.category = options.category;
     this.exportSize = options.exportSize;
     this.lastChnage = options.lastChnage;
@@ -165,21 +173,28 @@ class WebViewProvider {
   viewType;
   _stylePath = [];
   _scriptPath = [];
-  extensionUri;
-  _view;
-  constructor(extensionUri, viewType, stylePath = [], scriptPath = []) {
-    this.extensionUri = extensionUri;
-    this.viewType = viewType;
-    this._scriptPath = scriptPath;
-    this._stylePath = stylePath;
+  _ctx;
+  view;
+  handle;
+  constructor(context, handle, options) {
+    this.viewType = options.viewType;
+    this._scriptPath = options.scriptPath;
+    this._stylePath = options.stylePath;
+    this._ctx = context;
+    this.handle = handle;
   }
   resolveWebviewView(webviewView) {
-    this._view = webviewView;
+    this.view = webviewView;
     webviewView.webview.options = {
       enableScripts: true,
-      localResourceRoots: [this.extensionUri]
+      localResourceRoots: [this._ctx.extensionUri]
     };
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+    new MessageServer(webviewView, this._ctx.subscriptions, this.handle);
+  }
+  postMessage(type, data) {
+    const msg = { type, data };
+    this.view?.webview.postMessage(msg);
   }
   createVscodePath = (paths, nonce, type = "script") => {
     const vscodePath = paths.map((path) => {
@@ -230,6 +245,20 @@ function getNonce() {
   }
   return text;
 }
+class MessageServer {
+  constructor(webview, subscriptions, handlerMap) {
+    webview.webview.onDidReceiveMessage(
+      async ({ name, data }) => {
+        const handle = handlerMap[name];
+        if (!handle)
+          return webview.webview.postMessage({ name, data });
+        await handle(data);
+      },
+      void 0,
+      subscriptions
+    );
+  }
+}
 
 const getExtensionFileVscodeResource = (context, relativePath) => {
   const diskPath = vscode__namespace.Uri.file(path.join(context.extensionPath, relativePath));
@@ -237,15 +266,21 @@ const getExtensionFileVscodeResource = (context, relativePath) => {
 };
 
 class SearchView extends WebViewProvider {
-  constructor(ctx, viewType) {
-    super(
-      ctx.extensionUri,
+  constructor(ctx, handleMap, viewType) {
+    super(ctx, handleMap, {
       viewType,
-      [getExtensionFileVscodeResource(ctx, "style/search-view.css")],
-      [getExtensionFileVscodeResource(ctx, "views/search-view.js")]
-    );
+      stylePath: [getExtensionFileVscodeResource(ctx, "style/search-view.css")],
+      scriptPath: [getExtensionFileVscodeResource(ctx, "views/search-view.js")]
+    });
   }
 }
+const searchViewHandleMap = (silderView) => {
+  return {
+    search: async (msg) => {
+      silderView?.search(msg);
+    }
+  };
+};
 
 const previewMdFile = async (options) => {
   const path$1 = vscode__namespace.Uri.file(path.resolve(docsPath, `${options.name}/index.md`));
@@ -261,16 +296,17 @@ const commandOptions = [
 
 async function activate(context) {
   registerCommands(context, commandOptions);
+  const silderView = new SilderView();
   registerTreeDataProvider(context, [
     {
       viewID: "docslibs",
-      treeDataProvider: new SilderView()
+      treeDataProvider: silderView
     }
   ]);
   registerWebviewViewProvider(
     context,
     "docssearch",
-    new SearchView(context, "docssearch")
+    new SearchView(context, searchViewHandleMap(silderView), "docssearch")
   );
 }
 function deactivate() {

@@ -1,34 +1,50 @@
 import type * as vscode from 'vscode';
 
+export type HandleMap = Record<string, (data: any) => any>;
+
 export class WebViewProvider implements vscode.WebviewViewProvider {
   viewType: string;
 
   private _stylePath: string[] = [];
   private _scriptPath: string[] = [];
-  private extensionUri: vscode.Uri;
 
-  private _view?: vscode.WebviewView;
+  _ctx: vscode.ExtensionContext;
+
+  view?: vscode.WebviewView;
+
+  private handle: HandleMap;
 
   constructor(
-    extensionUri: vscode.Uri,
-    viewType: string,
-    stylePath: string[] = [],
-    scriptPath: string[] = []
+    context: vscode.ExtensionContext,
+    handle: Record<string, (data: any) => any>,
+    options: {
+      viewType: string;
+      stylePath: string[];
+      scriptPath: string[];
+    }
   ) {
-    this.extensionUri = extensionUri;
-    this.viewType = viewType;
-    this._scriptPath = scriptPath;
-    this._stylePath = stylePath;
+    this.viewType = options.viewType;
+    this._scriptPath = options.scriptPath;
+    this._stylePath = options.stylePath;
+    this._ctx = context;
+    this.handle = handle;
   }
 
   public resolveWebviewView(webviewView: vscode.WebviewView) {
-    this._view = webviewView;
+    this.view = webviewView;
 
     webviewView.webview.options = {
       enableScripts: true,
-      localResourceRoots: [this.extensionUri]
+      localResourceRoots: [this._ctx.extensionUri]
     };
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+
+    new MessageServer(webviewView, this._ctx.subscriptions, this.handle);
+  }
+
+  postMessage(type: any, data: any) {
+    const msg = { type, data };
+    this.view?.webview.postMessage(msg);
   }
 
   private createVscodePath = (
@@ -88,4 +104,25 @@ function getNonce() {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
   return text;
+}
+
+class MessageServer {
+  constructor(
+    webview: vscode.WebviewView,
+    subscriptions: any,
+    handlerMap: HandleMap
+  ) {
+    webview.webview.onDidReceiveMessage(
+      async ({ name, data }) => {
+        const handle = handlerMap[name];
+        if (!handle)
+          // 404
+          return webview.webview.postMessage({ name, data });
+        await handle(data);
+        // if (!responseData) webview.webview.postMessage(data);
+      },
+      undefined,
+      subscriptions
+    );
+  }
 }

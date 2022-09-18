@@ -1081,6 +1081,37 @@
     function isRef(r) {
         return !!(r && r.__v_isRef === true);
     }
+    function ref(value) {
+        return createRef(value, false);
+    }
+    function createRef(rawValue, shallow) {
+        if (isRef(rawValue)) {
+            return rawValue;
+        }
+        return new RefImpl(rawValue, shallow);
+    }
+    class RefImpl {
+        constructor(value, __v_isShallow) {
+            this.__v_isShallow = __v_isShallow;
+            this.dep = undefined;
+            this.__v_isRef = true;
+            this._rawValue = __v_isShallow ? value : toRaw(value);
+            this._value = __v_isShallow ? value : toReactive(value);
+        }
+        get value() {
+            trackRefValue(this);
+            return this._value;
+        }
+        set value(newVal) {
+            const useDirectValue = this.__v_isShallow || isShallow(newVal) || isReadonly(newVal);
+            newVal = useDirectValue ? newVal : toRaw(newVal);
+            if (hasChanged(newVal, this._rawValue)) {
+                this._rawValue = newVal;
+                this._value = useDirectValue ? newVal : toReactive(newVal);
+                triggerRefValue(this);
+            }
+        }
+    }
     function unref(ref) {
         return isRef(ref) ? ref.value : ref;
     }
@@ -2057,6 +2088,11 @@
         return value;
     }
 
+    // implementation, close to no-op
+    function defineComponent(options) {
+        return isFunction(options) ? { setup: options, name: options.name } : options;
+    }
+
     const isAsyncWrapper = (i) => !!i.type.__asyncLoader;
 
     const isKeepAlive = (vnode) => vnode.type.__isKeepAlive;
@@ -2154,6 +2190,39 @@
     const onRenderTracked = createHook("rtc" /* LifecycleHooks.RENDER_TRACKED */);
     function onErrorCaptured(hook, target = currentInstance) {
         injectHook("ec" /* LifecycleHooks.ERROR_CAPTURED */, hook, target);
+    }
+    /**
+     * Adds directives to a VNode.
+     */
+    function withDirectives(vnode, directives) {
+        const internalInstance = currentRenderingInstance;
+        if (internalInstance === null) {
+            return vnode;
+        }
+        const instance = getExposeProxy(internalInstance) ||
+            internalInstance.proxy;
+        const bindings = vnode.dirs || (vnode.dirs = []);
+        for (let i = 0; i < directives.length; i++) {
+            let [dir, value, arg, modifiers = EMPTY_OBJ] = directives[i];
+            if (isFunction(dir)) {
+                dir = {
+                    mounted: dir,
+                    updated: dir
+                };
+            }
+            if (dir.deep) {
+                traverse(value);
+            }
+            bindings.push({
+                dir,
+                instance,
+                value,
+                oldValue: void 0,
+                arg,
+                modifiers
+            });
+        }
+        return vnode;
     }
     function invokeDirectiveHook(vnode, prevVNode, instance, name) {
         const bindings = vnode.dirs;
@@ -5611,6 +5680,81 @@
         return key in el;
     }
 
+    const getModelAssigner = (vnode) => {
+        const fn = vnode.props['onUpdate:modelValue'] ||
+            (false );
+        return isArray(fn) ? value => invokeArrayFns(fn, value) : fn;
+    };
+    function onCompositionStart(e) {
+        e.target.composing = true;
+    }
+    function onCompositionEnd(e) {
+        const target = e.target;
+        if (target.composing) {
+            target.composing = false;
+            target.dispatchEvent(new Event('input'));
+        }
+    }
+    // We are exporting the v-model runtime directly as vnode hooks so that it can
+    // be tree-shaken in case v-model is never used.
+    const vModelText = {
+        created(el, { modifiers: { lazy, trim, number } }, vnode) {
+            el._assign = getModelAssigner(vnode);
+            const castToNumber = number || (vnode.props && vnode.props.type === 'number');
+            addEventListener(el, lazy ? 'change' : 'input', e => {
+                if (e.target.composing)
+                    return;
+                let domValue = el.value;
+                if (trim) {
+                    domValue = domValue.trim();
+                }
+                if (castToNumber) {
+                    domValue = toNumber(domValue);
+                }
+                el._assign(domValue);
+            });
+            if (trim) {
+                addEventListener(el, 'change', () => {
+                    el.value = el.value.trim();
+                });
+            }
+            if (!lazy) {
+                addEventListener(el, 'compositionstart', onCompositionStart);
+                addEventListener(el, 'compositionend', onCompositionEnd);
+                // Safari < 10.2 & UIWebView doesn't fire compositionend when
+                // switching focus before confirming composition choice
+                // this also fixes the issue where some browsers e.g. iOS Chrome
+                // fires "change" instead of "input" on autocomplete.
+                addEventListener(el, 'change', onCompositionEnd);
+            }
+        },
+        // set value on mounted so it's after min/max for type="range"
+        mounted(el, { value }) {
+            el.value = value == null ? '' : value;
+        },
+        beforeUpdate(el, { value, modifiers: { lazy, trim, number } }, vnode) {
+            el._assign = getModelAssigner(vnode);
+            // avoid clearing unresolved text. #2302
+            if (el.composing)
+                return;
+            if (document.activeElement === el && el.type !== 'range') {
+                if (lazy) {
+                    return;
+                }
+                if (trim && el.value.trim() === value) {
+                    return;
+                }
+                if ((number || el.type === 'number') && toNumber(el.value) === value) {
+                    return;
+                }
+            }
+            const newValue = value == null ? '' : value;
+            if (el.value !== newValue) {
+                el.value = newValue;
+            }
+        }
+    };
+
     const rendererOptions = /*#__PURE__*/ extend({ patchProp }, nodeOps);
     // lazy create the renderer - this makes core renderer logic tree-shakable
     // in case the user only imports reactivity utilities from Vue.
@@ -5661,16 +5805,43 @@
       return target;
     };
 
-    const _sfc_main = {};
-    const _hoisted_1 = { class: "search" };
-    const _hoisted_2 = /* @__PURE__ */ createBaseVNode("input", { type: "text" }, null, -1);
-    const _hoisted_3 = [
-      _hoisted_2
-    ];
-    function _sfc_render(_ctx, _cache) {
-      return openBlock(), createElementBlock("div", _hoisted_1, _hoisted_3);
-    }
-    var App = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__file", "D:\\project\\\u4E2A\u4EBA\\\u5DE5\u5177\u5E93\\vueuse-vscode\\package\\views\\search-view\\component\\search-view.vue"]]);
+    const _hoisted_1 = { class: "input-warper" };
+    const _sfc_main = /* @__PURE__ */ defineComponent({
+      __name: "search-view",
+      setup(__props) {
+        const vscode = acquireVsCodeApi();
+        const searchValue = ref("");
+        const active = ref(false);
+        const handleInput = () => {
+          vscode.postMessage({
+            name: "search",
+            data: {
+              command: "search",
+              searchValue: searchValue.value
+            }
+          });
+        };
+        return (_ctx, _cache) => {
+          return openBlock(), createElementBlock("div", _hoisted_1, [
+            withDirectives(createBaseVNode("input", {
+              "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => searchValue.value = $event),
+              class: "search",
+              type: "text",
+              placeholder: "\u641C\u7D22",
+              onInput: handleInput
+            }, null, 544), [
+              [vModelText, searchValue.value]
+            ]),
+            createBaseVNode("span", {
+              title: "\u533A\u5206\u5927\u5C0F\u5199",
+              class: normalizeClass(["input-rule", { active: active.value }]),
+              onClick: _cache[1] || (_cache[1] = ($event) => active.value = !active.value)
+            }, "Aa", 2)
+          ]);
+        };
+      }
+    });
+    var App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "D:\\project\\\u4E2A\u4EBA\\\u5DE5\u5177\u5E93\\vueuse-vscode\\package\\views\\search-view\\component\\search-view.vue"]]);
 
     const app = createApp(App);
     app.mount("#app");

@@ -14,6 +14,7 @@
     "onLanguage:vue",
     "onLanguage:javascript",
     "onLanguage:teptscript",
+    "onView:docssearch",
     "onView:docslibs"
   ],
   "categories": [
@@ -63,7 +64,7 @@
       "view/title": [
         {
           "command": "VueUse.refreshEntry",
-          "when": "view == docslibs",
+          "when": "view == docssearch",
           "group": "navigation"
         }
       ]
@@ -81,12 +82,13 @@
       "docshome": [
         {
           "id": "docssearch",
-          "type": "webview",
-          "name": "VueUse"
+          "name": "检索",
+          "type": "webview"
         },
         {
           "id": "docslibs",
-          "name": "函数库"
+          "name": "函数库",
+          "icon": "public/logo.svg"
         }
       ]
     },

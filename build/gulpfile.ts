@@ -18,7 +18,14 @@ export const vscode = series(
   withTask('vscode-copy', copyFiles)
 );
 export const vscodeExtension = withTask('vscode-watch', () => {
-  watch(resolve(rootPath, 'src'), vscode);
+  watch(
+    resolve(rootPath, 'package'),
+    series(
+      withTask('vue', buildVue),
+      withTask('style', buildStyles),
+      withTask('vscode-build', vscodeBuild)
+    )
+  );
 });
 
 export const watchVscode = series(vscodeExtension);

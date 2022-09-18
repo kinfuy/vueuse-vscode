@@ -5,6 +5,7 @@ import { readDirs } from '../tools/utils';
 import { getConfigJson } from '../tools/file';
 import type { FunctionInfo } from '../tools/file';
 export class SilderView implements vscode.TreeDataProvider<SilderViewItem> {
+  private searchValue = '';
   constructor() {}
 
   getTreeItem(node: SilderViewItem): vscode.TreeItem {
@@ -16,7 +17,7 @@ export class SilderView implements vscode.TreeDataProvider<SilderViewItem> {
     return new Promise((resolve) => {
       if (node) {
         this.getFunction(functionFile).then((treeNode) => {
-          resolve(treeNode);
+          if (this.searchValue) resolve(treeNode);
         });
       } else {
         let count = 0;
@@ -54,10 +55,15 @@ export class SilderView implements vscode.TreeDataProvider<SilderViewItem> {
         }
         count++;
         if (count === functionFile.length) {
-          resolve(treeNode);
+          resolve(treeNode.filter((x) => x.name.includes(this.searchValue)));
         }
       });
     });
+  }
+
+  search(msg: any) {
+    this.searchValue = msg.searchValue;
+    this.refresh();
   }
 
   private _onDidChangeTreeData: vscode.EventEmitter<
@@ -78,8 +84,10 @@ class SilderViewItem extends vscode.TreeItem {
   readonly exportSize;
   readonly lastChnage;
   readonly related;
+  readonly name;
   constructor(options: FunctionInfo) {
     super(options.name, options.collapsibleState);
+    this.name = options.name;
     this.category = options.category;
     this.exportSize = options.exportSize;
     this.lastChnage = options.lastChnage;

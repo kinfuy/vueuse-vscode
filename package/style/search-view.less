@@ -1,14 +1,40 @@
 body.vscode-light {
-    color: black;
+  color: black;
 }
 
 body.vscode-dark {
-    color: white;
-    .search{
-        background-color: rgb(60, 60, 60);
+  .input-warper {
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 2px 4px;
+    background-color: rgb(60, 60, 60);
+  }
+  .search {
+    outline: none;
+    background-color: transparent;
+    color: #fff;
+    height: 18px;
+    width: calc(100% - 20px);
+    border: none;
+    padding: 2px;
+  }
+  .input-rule {
+    font-size: 12px;
+    padding: 2px 4px;
+    cursor: pointer;
+    &:hover {
+      background-color: var(--vscode-inputOption-hoverBackground);
     }
+  }
+  .active {
+    color: rgb(255, 255, 255);
+    border-color: rgba(0, 122, 204, 0);
+    background-color: rgba(0, 127, 212, 0.4) !important;
+  }
 }
 
 body.vscode-high-contrast {
-    color: red;
+  color: red;
 }
