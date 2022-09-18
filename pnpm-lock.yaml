@@ -8,6 +8,7 @@ specifiers:
   '@commitlint/cli': ^9.1.2
   '@commitlint/config-angular': ^8.3.4
   '@commitlint/config-conventional': ^9.1.2
+  '@element-plus/icons-vue': ^2.0.9
   '@rollup/plugin-replace': ^4.0.0
   '@types/gulp': ^4.0.9
   '@types/gulp-autoprefixer': ^0.0.33
@@ -24,12 +25,14 @@ specifiers:
   lint-staged: ^10.5.4
   prettier: ^2.6.2
   rimraf: ^3.0.2
+  rollup-plugin-css-only: ^3.1.0
   sucrase: ^3.20.3
   typescript: ^4.6.3
   vite: ^3.1.0
   vue: ^3.2.39
 
 dependencies:
+  '@element-plus/icons-vue': 2.0.9_vue@3.2.39
   vue: 3.2.39
 
 devDependencies:
@@ -56,6 +59,7 @@ devDependencies:
   lint-staged: 10.5.4
   prettier: 2.7.1
   rimraf: 3.0.2
+  rollup-plugin-css-only: 3.1.0
   sucrase: 3.25.0
   typescript: 4.8.3
   vite: 3.1.0
@@ -610,6 +614,14 @@ packages:
     resolution: {integrity: sha512-r3fwVbVH+M8W0qYlBBZFsUwKe6NT5qvz+EmU7sr8VeN1cQ63z+3cfXyTo7WGGEMEgKiT0jboNAK3b1FZp8k9LQ==}
     engines: {node: '>=v8.17.0'}
     dev: true
+
+  /@element-plus/icons-vue/2.0.9_vue@3.2.39:
+    resolution: {integrity: sha512-okdrwiVeKBmW41Hkl0eMrXDjzJwhQMuKiBOu17rOszqM+LS/yBYpNQNV5Jvoh06Wc+89fMmb/uhzf8NZuDuUaQ==}
+    peerDependencies:
+      vue: ^3.2.0
+    dependencies:
+      vue: 3.2.39
+    dev: false
 
   /@esbuild/linux-loong64/0.14.54:
     resolution: {integrity: sha512-bZBrLAIX1kpWelV0XemxBZllyRmM6vgFQQG2GdNb+r3Fkp0FOh1NJSvekXDs7jq70k4euu1cryLMfU+mTXlEpw==}
@@ -5691,6 +5703,15 @@ packages:
     hasBin: true
     dependencies:
       glob: 7.2.3
+    dev: true
+
+  /rollup-plugin-css-only/3.1.0:
+    resolution: {integrity: sha512-TYMOE5uoD76vpj+RTkQLzC9cQtbnJNktHPB507FzRWBVaofg7KhIqq1kGbcVOadARSozWF883Ho9KpSPKH8gqA==}
+    engines: {node: '>=10.12.0'}
+    peerDependencies:
+      rollup: 1 || 2
+    dependencies:
+      '@rollup/pluginutils': 4.2.1
     dev: true
 
   /rollup-plugin-esbuild/4.10.1_gcmxrjsrrogx33qclilb6bbcqe:

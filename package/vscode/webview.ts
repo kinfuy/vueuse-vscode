@@ -12,11 +12,8 @@ export class WebViewProvider implements vscode.WebviewViewProvider {
 
   view?: vscode.WebviewView;
 
-  private handle: HandleMap;
-
   constructor(
     context: vscode.ExtensionContext,
-    handle: Record<string, (data: any) => any>,
     options: {
       viewType: string;
       stylePath: string[];
@@ -27,7 +24,6 @@ export class WebViewProvider implements vscode.WebviewViewProvider {
     this._scriptPath = options.scriptPath;
     this._stylePath = options.stylePath;
     this._ctx = context;
-    this.handle = handle;
   }
 
   public resolveWebviewView(webviewView: vscode.WebviewView) {
@@ -37,10 +33,11 @@ export class WebViewProvider implements vscode.WebviewViewProvider {
       enableScripts: true,
       localResourceRoots: [this._ctx.extensionUri]
     };
-    webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
-
-    new MessageServer(webviewView, this._ctx.subscriptions, this.handle);
+    webviewView.webview.html = this._getHtmlForWebview();
+    this.init();
   }
+
+  init() {}
 
   postMessage(type: any, data: any) {
     const msg = { type, data };
@@ -49,80 +46,35 @@ export class WebViewProvider implements vscode.WebviewViewProvider {
 
   private createVscodePath = (
     paths: string[],
-    nonce: string,
     type: 'script' | 'style' = 'script'
   ) => {
     const vscodePath = paths.map((path) => {
-      if (type === 'script')
-        return `<script nonce="${nonce}"  src="${path}"></script>`;
+      if (type === 'script') return `<script defer  src="${path}"></script>`;
       if (type === 'style') return `<link href="${path}" rel="stylesheet">`;
-      return [];
+      return '';
     });
     return vscodePath;
   };
 
-  private _getHtmlForWebview(webview: vscode.Webview) {
-    // Use a nonce to only allow a specific script to be run.
-    const nonce = getNonce();
-
-    const scriptCode = this.createVscodePath(this._scriptPath, nonce).join(
-      '/n'
+  private _getHtmlForWebview() {
+    const scriptCode = this.createVscodePath(this._scriptPath).join('\n');
+    const stylePath = this.createVscodePath(this._stylePath, 'style').join(
+      '\n'
     );
-
-    const stylePath = this.createVscodePath(
-      this._stylePath,
-      nonce,
-      'style'
-    ).join('/n');
 
     return `<!DOCTYPE html>
 			<html lang="en">
 			<head>
 				<meta charset="UTF-8">
-				<!--
-					Use a content security policy to only allow loading images from https or from our extension directory,
-					and only allow scripts that have a specific nonce.
-				-->
-        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 				${stylePath}
-				
+
+        ${scriptCode}
 				<title>webview</title>
 			</head>
 			<body>
-                <div id='app'></div>
-                ${scriptCode}
+          <div id='app'></div>
 			</body>
 			</html>`;
-  }
-}
-function getNonce() {
-  let text = '';
-  const possible =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  for (let i = 0; i < 32; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
-}
-
-class MessageServer {
-  constructor(
-    webview: vscode.WebviewView,
-    subscriptions: any,
-    handlerMap: HandleMap
-  ) {
-    webview.webview.onDidReceiveMessage(
-      async ({ name, data }) => {
-        const handle = handlerMap[name];
-        if (!handle)
-          // 404
-          return webview.webview.postMessage({ name, data });
-        await handle(data);
-        // if (!responseData) webview.webview.postMessage(data);
-      },
-      undefined,
-      subscriptions
-    );
   }
 }

@@ -64,7 +64,7 @@
       "view/title": [
         {
           "command": "VueUse.refreshEntry",
-          "when": "view == docssearch",
+          "when": "view == docslibs",
           "group": "navigation"
         }
       ]
@@ -81,22 +81,14 @@
     "views": {
       "docshome": [
         {
-          "id": "docssearch",
-          "name": "检索",
-          "type": "webview"
-        },
-        {
           "id": "docslibs",
+          "type": "webview",
           "name": "函数库",
           "icon": "public/logo.svg"
         }
       ]
     },
     "viewsWelcome": [
-      {
-        "view": "docssearch",
-        "contents": "暂无数据"
-      },
       {
         "view": "docslibs",
         "contents": "暂无数据"

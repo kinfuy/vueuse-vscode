@@ -12,20 +12,13 @@ task('watchVscode', () => {});
 export const vscode = series(
   withTask('clear', () => run('pnpm run clear')),
   // withTask('update:version', () => run('pnpm run update:version')),
-  withTask('vue', buildVue),
-  withTask('style', buildStyles),
   withTask('vscode-build', vscodeBuild),
+  withTask('style', buildStyles),
+  withTask('vue', buildVue),
   withTask('vscode-copy', copyFiles)
 );
 export const vscodeExtension = withTask('vscode-watch', () => {
-  watch(
-    resolve(rootPath, 'package'),
-    series(
-      withTask('vue', buildVue),
-      withTask('style', buildStyles),
-      withTask('vscode-build', vscodeBuild)
-    )
-  );
+  watch(resolve(rootPath, 'package'), vscode);
 });
 
 export const watchVscode = series(vscodeExtension);

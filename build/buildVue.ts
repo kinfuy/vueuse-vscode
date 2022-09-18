@@ -1,5 +1,7 @@
 import { resolve } from 'path';
+import { writeFileSync } from 'fs';
 import replace from '@rollup/plugin-replace';
+import css from 'rollup-plugin-css-only';
 import { buildVueLib } from '@alqmc/build-vue';
 import { enterPath, outputPath, rootPath } from './path';
 import type { DefineVueConfig } from '@alqmc/build-vue';
@@ -22,6 +24,11 @@ const buildVueConfig: DefineVueConfig = {
   pluginOptions: {
     mergeType: 'prefix',
     plugins: [
+      css({
+        output(styles) {
+          writeFileSync(resolve(outputPath, 'style/bundle.css'), styles);
+        }
+      }),
       replace({
         preventAssignment: true,
         'process.env.NODE_ENV': JSON.stringify('production'),

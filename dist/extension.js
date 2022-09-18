@@ -36,25 +36,83 @@ const registerCommands = (context, registerOptions) => {
   context.subscriptions.push(...commands);
   return commands;
 };
-const registerTreeDataProvider = (context, registerOptions) => {
-  const treeDataProvider = registerOptions.map((x) => {
-    return vscode__namespace.window.registerTreeDataProvider(x.viewID, x.treeDataProvider);
-  });
-  context.subscriptions.push(...treeDataProvider);
-};
 const registerWebviewViewProvider = (context, viewId, provider) => {
   context.subscriptions.push(
     vscode__namespace.window.registerWebviewViewProvider(viewId, provider)
   );
 };
 
-const rootPath = path.resolve(__dirname);
-const docsPath = path.resolve(rootPath, "docs");
+class WebViewProvider {
+  viewType;
+  _stylePath = [];
+  _scriptPath = [];
+  _ctx;
+  view;
+  constructor(context, options) {
+    this.viewType = options.viewType;
+    this._scriptPath = options.scriptPath;
+    this._stylePath = options.stylePath;
+    this._ctx = context;
+  }
+  resolveWebviewView(webviewView) {
+    this.view = webviewView;
+    webviewView.webview.options = {
+      enableScripts: true,
+      localResourceRoots: [this._ctx.extensionUri]
+    };
+    webviewView.webview.html = this._getHtmlForWebview();
+    this.init();
+  }
+  init() {
+  }
+  postMessage(type, data) {
+    const msg = { type, data };
+    this.view?.webview.postMessage(msg);
+  }
+  createVscodePath = (paths, type = "script") => {
+    const vscodePath = paths.map((path) => {
+      if (type === "script")
+        return `<script defer  src="${path}"><\/script>`;
+      if (type === "style")
+        return `<link href="${path}" rel="stylesheet">`;
+      return "";
+    });
+    return vscodePath;
+  };
+  _getHtmlForWebview() {
+    const scriptCode = this.createVscodePath(this._scriptPath).join("\n");
+    const stylePath = this.createVscodePath(this._stylePath, "style").join(
+      "\n"
+    );
+    return `<!DOCTYPE html>
+			<html lang="en">
+			<head>
+				<meta charset="UTF-8">
+				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				${stylePath}
+
+        ${scriptCode}
+				<title>webview</title>
+			</head>
+			<body>
+          <div id='app'></div>
+			</body>
+			</html>`;
+  }
+}
+
+const getExtensionFileVscodeResource = (context, relativePath) => {
+  const diskPath = vscode__namespace.Uri.file(path.join(context.extensionPath, relativePath));
+  return diskPath.with({ scheme: "vscode-resource" }).toString();
+};
 
 const readDirs = async (path) => {
   const dirs = await promises.readdir(path);
   return dirs.filter((x) => fs.lstatSync(`${path}/${x}`).isDirectory());
 };
+
+const rootPath = path.resolve(__dirname);
+const docsPath = path.resolve(rootPath, "docs");
 
 const errorTip = (message, btn) => {
   if (btn)
@@ -73,214 +131,65 @@ const getConfigJson = async (rootPath) => {
   }
 };
 
-class SilderView {
-  searchValue = "";
-  constructor() {
+class SearchView extends WebViewProvider {
+  listFunctions = [];
+  constructor(ctx, viewType) {
+    super(ctx, {
+      viewType,
+      stylePath: [
+        getExtensionFileVscodeResource(ctx, "style/search-view.css"),
+        getExtensionFileVscodeResource(ctx, "style/bundle.css")
+      ],
+      scriptPath: [getExtensionFileVscodeResource(ctx, "views/search-view.js")]
+    });
   }
-  getTreeItem(node) {
-    return node;
+  init() {
+    if (this.view)
+      new MessageServer(
+        this.view,
+        this._ctx.subscriptions,
+        searchViewHandleMap(this)
+      );
+    this.getFunctions();
   }
-  async getChildren(node) {
+  async getFunctions() {
+    this.listFunctions = [];
     const functionFile = await readDirs(docsPath);
-    return new Promise((resolve2) => {
-      if (node) {
-        this.getFunction(functionFile).then((treeNode) => {
-          if (this.searchValue)
-            resolve2(treeNode);
-        });
-      } else {
-        let count = 0;
-        const treeNode = [];
-        if (functionFile.length === 0) {
-          resolve2(treeNode);
-        } else {
-          functionFile.forEach((x) => {
-            this.getFunction([x]).then((node2) => {
-              if (node2.length > 0) {
-                treeNode.push(node2[0]);
-              }
-            }).finally(() => {
-              count++;
-              if (functionFile.length === count) {
-                resolve2(treeNode);
-              }
-            });
-          });
-        }
-      }
+    functionFile.forEach(async (file) => {
+      const snippets = await getConfigJson(`${docsPath}/${file}/index.json`);
+      snippets && this.listFunctions.push(snippets);
     });
   }
-  getFunction(functionFile) {
-    return new Promise((resolve2) => {
-      const treeNode = [];
-      let count = 0;
-      functionFile.forEach(async (name) => {
-        const snippets = await getConfigJson(`${docsPath}/${name}/index.json`);
-        if (snippets) {
-          treeNode.push(new SilderViewItem(snippets));
-        }
-        count++;
-        if (count === functionFile.length) {
-          resolve2(treeNode.filter((x) => x.name.includes(this.searchValue)));
-        }
+}
+const searchViewHandleMap = (webview) => {
+  return {
+    init: () => {
+      webview.postMessage("init", {
+        functionList: webview.listFunctions
       });
-    });
-  }
-  search(msg) {
-    this.searchValue = msg.searchValue;
-    this.refresh();
-  }
-  _onDidChangeTreeData = new vscode__namespace.EventEmitter();
-  onDidChangeTreeData = this._onDidChangeTreeData.event;
-  refresh() {
-    this._onDidChangeTreeData.fire();
-  }
-}
-class SilderViewItem extends vscode__namespace.TreeItem {
-  category;
-  exportSize;
-  lastChnage;
-  related;
-  name;
-  constructor(options) {
-    super(options.name, options.collapsibleState);
-    this.name = options.name;
-    this.category = options.category;
-    this.exportSize = options.exportSize;
-    this.lastChnage = options.lastChnage;
-    this.related = options.related;
-    const tooltip = [
-      `### ${options.name}`,
-      `${options.description}`,
-      `${options.exportSize}`,
-      `${options.lastChnage}`
-    ];
-    this.tooltip = new vscode__namespace.MarkdownString(tooltip.join("\n\n"), true);
-    this.command = {
-      title: "\u9884\u89C8\u6587\u6863",
-      command: "VueUse.previewMd",
-      arguments: [options]
-    };
-  }
-  iconPath = {
-    light: path.resolve(rootPath, `public/logo.svg`),
-    dark: path.resolve(rootPath, `public/logo.svg`)
+    },
+    search: async (msg) => {
+      console.log("log=>index=>27:msg:%o", msg);
+    },
+    clickFun: (item) => {
+      console.log("log=>index=>53:item:%o", item);
+      vscode__namespace.commands.executeCommand("VueUse.previewMd", item.funcItem);
+    }
   };
-  contextValue = "dependency";
-}
-
-class WebViewProvider {
-  viewType;
-  _stylePath = [];
-  _scriptPath = [];
-  _ctx;
-  view;
-  handle;
-  constructor(context, handle, options) {
-    this.viewType = options.viewType;
-    this._scriptPath = options.scriptPath;
-    this._stylePath = options.stylePath;
-    this._ctx = context;
-    this.handle = handle;
-  }
-  resolveWebviewView(webviewView) {
-    this.view = webviewView;
-    webviewView.webview.options = {
-      enableScripts: true,
-      localResourceRoots: [this._ctx.extensionUri]
-    };
-    webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
-    new MessageServer(webviewView, this._ctx.subscriptions, this.handle);
-  }
-  postMessage(type, data) {
-    const msg = { type, data };
-    this.view?.webview.postMessage(msg);
-  }
-  createVscodePath = (paths, nonce, type = "script") => {
-    const vscodePath = paths.map((path) => {
-      if (type === "script")
-        return `<script nonce="${nonce}"  src="${path}"><\/script>`;
-      if (type === "style")
-        return `<link href="${path}" rel="stylesheet">`;
-      return [];
-    });
-    return vscodePath;
-  };
-  _getHtmlForWebview(webview) {
-    const nonce = getNonce();
-    const scriptCode = this.createVscodePath(this._scriptPath, nonce).join(
-      "/n"
-    );
-    const stylePath = this.createVscodePath(
-      this._stylePath,
-      nonce,
-      "style"
-    ).join("/n");
-    return `<!DOCTYPE html>
-			<html lang="en">
-			<head>
-				<meta charset="UTF-8">
-				<!--
-					Use a content security policy to only allow loading images from https or from our extension directory,
-					and only allow scripts that have a specific nonce.
-				-->
-        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				${stylePath}
-				
-				<title>webview</title>
-			</head>
-			<body>
-                <div id='app'></div>
-                ${scriptCode}
-			</body>
-			</html>`;
-  }
-}
-function getNonce() {
-  let text = "";
-  const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  for (let i = 0; i < 32; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
-}
+};
 class MessageServer {
   constructor(webview, subscriptions, handlerMap) {
     webview.webview.onDidReceiveMessage(
       async ({ name, data }) => {
         const handle = handlerMap[name];
-        if (!handle)
-          return webview.webview.postMessage({ name, data });
-        await handle(data);
+        if (handle)
+          await handle(data);
       },
       void 0,
       subscriptions
     );
   }
 }
-
-const getExtensionFileVscodeResource = (context, relativePath) => {
-  const diskPath = vscode__namespace.Uri.file(path.join(context.extensionPath, relativePath));
-  return diskPath.with({ scheme: "vscode-resource" }).toString();
-};
-
-class SearchView extends WebViewProvider {
-  constructor(ctx, handleMap, viewType) {
-    super(ctx, handleMap, {
-      viewType,
-      stylePath: [getExtensionFileVscodeResource(ctx, "style/search-view.css")],
-      scriptPath: [getExtensionFileVscodeResource(ctx, "views/search-view.js")]
-    });
-  }
-}
-const searchViewHandleMap = (silderView) => {
-  return {
-    search: async (msg) => {
-      silderView?.search(msg);
-    }
-  };
-};
 
 const previewMdFile = async (options) => {
   const path$1 = vscode__namespace.Uri.file(path.resolve(docsPath, `${options.name}/index.md`));
@@ -296,17 +205,10 @@ const commandOptions = [
 
 async function activate(context) {
   registerCommands(context, commandOptions);
-  const silderView = new SilderView();
-  registerTreeDataProvider(context, [
-    {
-      viewID: "docslibs",
-      treeDataProvider: silderView
-    }
-  ]);
   registerWebviewViewProvider(
     context,
-    "docssearch",
-    new SearchView(context, searchViewHandleMap(silderView), "docssearch")
+    "docslibs",
+    new SearchView(context, "docslibs")
   );
 }
 function deactivate() {

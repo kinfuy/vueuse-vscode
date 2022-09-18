@@ -16,6 +16,7 @@
     "lint:js": "eslint -c ./.eslintrc.js --fix --ext .jsx,.js,.vue \"src/**/*.{jsx,js,vue}\" "
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.0.9",
     "vue": "^3.2.39"
   },
   "devDependencies": {
@@ -42,6 +43,7 @@
     "lint-staged": "^10.5.4",
     "prettier": "^2.6.2",
     "rimraf": "^3.0.2",
+    "rollup-plugin-css-only": "^3.1.0",
     "sucrase": "^3.20.3",
     "typescript": "^4.6.3",
     "vite": "^3.1.0"
