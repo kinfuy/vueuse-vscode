@@ -49,7 +49,7 @@ const searchValue = ref('');
 
 const active = ref(false);
 
-const collapse = ref(false);
+const collapse = ref(true);
 
 const functionLists = ref<FunctionInfo[]>([]);
 

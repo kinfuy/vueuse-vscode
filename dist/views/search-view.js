@@ -6588,7 +6588,7 @@
       }
     }
 
-    var css_248z$1 = "";
+    var css_248z$1 = ".functio-item {\n  cursor: pointer;\n  line-height: 24px;\n}\n.functio-item:hover {\n  background-color: var(--vscode-inputOption-hoverBackground);\n}\n.functio-item .highlight {\n  background-color: #d0984f;\n}\n";
     styleInject(css_248z$1);
 
     var _export_sfc = (sfc, props) => {
@@ -6677,7 +6677,7 @@
         const vscode = acquireVsCodeApi();
         const searchValue = ref("");
         const active = ref(false);
-        const collapse = ref(false);
+        const collapse = ref(true);
         const functionLists = ref([]);
         const renderList = computed(() => {
           return functionLists.value.filter((x) => {

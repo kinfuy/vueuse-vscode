@@ -41,15 +41,15 @@ const renderText = (text: string) => {
   return text;
 };
 </script>
-<style>
+<style lang="less">
 .functio-item {
   cursor: pointer;
   line-height: 24px;
-}
-.functio-item:hover {
-  background-color: var(--vscode-inputOption-hoverBackground);
-}
-.highlight {
-  background-color: rgb(208, 152, 79);
+  &:hover {
+    background-color: var(--vscode-inputOption-hoverBackground);
+  }
+  .highlight {
+    background-color: rgb(208, 152, 79);
+  }
 }
 </style>
