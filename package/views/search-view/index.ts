@@ -46,11 +46,7 @@ export const searchViewHandleMap = (webview: SearchView): HandleMap => {
         functionList: webview.listFunctions
       });
     },
-    search: async (msg) => {
-      console.log('log=>index=>27:msg:%o', msg);
-    },
     clickFun: (item) => {
-      console.log('log=>index=>53:item:%o', item);
       vscode.commands.executeCommand('VueUse.previewMd', item.funcItem);
     }
   };

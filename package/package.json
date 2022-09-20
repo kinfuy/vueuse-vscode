@@ -47,8 +47,8 @@
         "title": "预览md文档"
       },
       {
-        "command": "VueUse.search",
-        "title": "检索方法"
+        "command": "VueUse.update-functions",
+        "title": "更新函数"
       },
       {
         "command": "VueUse.refreshEntry",
@@ -91,7 +91,7 @@
     "viewsWelcome": [
       {
         "view": "docslibs",
-        "contents": "暂无数据"
+        "contents": "暂无数据 \n [更新一下](command:VueUse.update-functions)"
       }
     ]
   }
