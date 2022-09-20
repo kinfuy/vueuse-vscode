@@ -2,6 +2,8 @@ import { resolve } from 'path';
 import { writeFileSync } from 'fs';
 import replace from '@rollup/plugin-replace';
 import css from 'rollup-plugin-css-only';
+import postcss from 'rollup-plugin-postcss';
+import vueJsx from '@vitejs/plugin-vue-jsx';
 import { buildVueLib } from '@alqmc/build-vue';
 import { enterPath, outputPath, rootPath } from './path';
 import type { DefineVueConfig } from '@alqmc/build-vue';
@@ -22,13 +24,15 @@ const buildVueConfig: DefineVueConfig = {
     }
   },
   pluginOptions: {
-    mergeType: 'prefix',
+    mergeType: 'sufix',
     plugins: [
+      vueJsx(),
       css({
         output(styles) {
           writeFileSync(resolve(outputPath, 'style/bundle.css'), styles);
         }
       }),
+      postcss(),
       replace({
         preventAssignment: true,
         'process.env.NODE_ENV': JSON.stringify('production'),

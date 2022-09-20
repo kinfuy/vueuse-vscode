@@ -1,3 +1,6 @@
+<p align="center">
+  <img width="180px" src="./package/public/logo-vscode.svg">
+</p>
 <p align="center"> VueUse</p>
 
 ### Features

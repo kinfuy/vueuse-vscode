@@ -6561,6 +6561,36 @@
     }
     var arrow_right_default = /* @__PURE__ */ export_helper_default(_sfc_main10, [["render", _sfc_render10], ["__file", "arrow-right.vue"]]);
 
+    function styleInject(css, ref) {
+      if ( ref === void 0 ) ref = {};
+      var insertAt = ref.insertAt;
+
+      if (!css || typeof document === 'undefined') { return; }
+
+      var head = document.head || document.getElementsByTagName('head')[0];
+      var style = document.createElement('style');
+      style.type = 'text/css';
+
+      if (insertAt === 'top') {
+        if (head.firstChild) {
+          head.insertBefore(style, head.firstChild);
+        } else {
+          head.appendChild(style);
+        }
+      } else {
+        head.appendChild(style);
+      }
+
+      if (style.styleSheet) {
+        style.styleSheet.cssText = css;
+      } else {
+        style.appendChild(document.createTextNode(css));
+      }
+    }
+
+    var css_248z$1 = "";
+    styleInject(css_248z$1);
+
     var _export_sfc = (sfc, props) => {
       const target = sfc.__vccOpts || sfc;
       for (const [key, val] of props) {
@@ -6618,13 +6648,30 @@
     });
     var FunctionList = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__file", "D:\\project\\\u4E2A\u4EBA\\\u5DE5\u5177\u5E93\\vueuse-vscode\\package\\views\\search-view\\component\\functionList.vue"]]);
 
-    const _hoisted_1 = { class: "input-warper" };
-    const _hoisted_2 = { class: "function-warper" };
-    const _hoisted_3 = { class: "pinel-collapse" };
-    const _hoisted_4 = { class: "el-icon" };
-    const _hoisted_5 = /* @__PURE__ */ createBaseVNode("span", { class: "pinel-title" }, "\u51FD\u6570\u5E93", -1);
-    const _hoisted_6 = { class: "opearte-warper" };
-    const _sfc_main = /* @__PURE__ */ defineComponent({
+    const _hoisted_1 = {
+      class: "input-warper"
+    };
+    const _hoisted_2 = {
+      class: "function-warper"
+    };
+    const _hoisted_3 = {
+      class: "pinel-collapse"
+    };
+    const _hoisted_4 = {
+      class: "el-icon"
+    };
+    const _hoisted_5 = /* @__PURE__ */ createBaseVNode(
+      "span",
+      {
+        class: "pinel-title"
+      },
+      "\u51FD\u6570\u5E93",
+      -1
+    );
+    const _hoisted_6 = {
+      class: "opearte-warper"
+    };
+    var _sfc_main = /* @__PURE__ */ defineComponent({
       __name: "search-view",
       setup(__props) {
         const vscode = acquireVsCodeApi();
@@ -6671,54 +6718,67 @@
           }
         });
         return (_ctx, _cache) => {
-          return openBlock(), createElementBlock(Fragment, null, [
-            createBaseVNode("div", _hoisted_1, [
-              withDirectives(createBaseVNode("input", {
+          return openBlock(), createElementBlock(
+            Fragment,
+            null,
+            [createBaseVNode("div", _hoisted_1, [withDirectives(createBaseVNode(
+              "input",
+              {
                 "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => searchValue.value = $event),
                 class: "search",
                 type: "text",
                 placeholder: "\u641C\u7D22",
                 onInput: handleInput
-              }, null, 544), [
-                [vModelText, searchValue.value]
-              ]),
-              createBaseVNode("span", {
+              },
+              null,
+              544
+            ), [[vModelText, searchValue.value]]), createBaseVNode(
+              "span",
+              {
                 title: "\u533A\u5206\u5927\u5C0F\u5199",
-                class: normalizeClass(["input-rule", { active: active.value }]),
+                class: normalizeClass(["input-rule", {
+                  active: active.value
+                }]),
                 onClick: _cache[1] || (_cache[1] = ($event) => active.value = !active.value)
-              }, "Aa", 2)
-            ]),
-            createBaseVNode("div", _hoisted_2, [
-              createBaseVNode("div", _hoisted_3, [
-                createBaseVNode("div", {
-                  class: "pinel-header",
-                  onClick: _cache[2] || (_cache[2] = ($event) => collapse.value = !collapse.value)
-                }, [
-                  createBaseVNode("span", _hoisted_4, [
-                    collapse.value ? (openBlock(), createBlock(unref(arrow_down_default), { key: 0 })) : (openBlock(), createBlock(unref(arrow_right_default), { key: 1 }))
-                  ]),
-                  _hoisted_5,
-                  createBaseVNode("div", _hoisted_6, [
-                    createBaseVNode("span", null, toDisplayString(unref(renderList).length), 1)
-                  ])
-                ]),
-                createVNode(Transition, null, {
-                  default: withCtx(() => [
-                    collapse.value ? (openBlock(), createBlock(FunctionList, {
-                      key: 0,
-                      "function-lists": unref(renderList),
-                      highlight: searchValue.value,
-                      onItemClick: handleClick
-                    }, null, 8, ["function-lists", "highlight"])) : createCommentVNode("v-if", true)
-                  ]),
-                  _: 1
-                })
-              ])
-            ])
-          ], 64);
+              },
+              "Aa",
+              2
+            )]), createBaseVNode("div", _hoisted_2, [createBaseVNode("div", _hoisted_3, [createBaseVNode("div", {
+              class: "pinel-header",
+              onClick: _cache[2] || (_cache[2] = ($event) => collapse.value = !collapse.value)
+            }, [createBaseVNode("span", _hoisted_4, [collapse.value ? (openBlock(), createBlock(unref(arrow_down_default), {
+              key: 0
+            })) : (openBlock(), createBlock(unref(arrow_right_default), {
+              key: 1
+            }))]), _hoisted_5, createBaseVNode("div", _hoisted_6, [createBaseVNode(
+              "span",
+              null,
+              toDisplayString(unref(renderList).length),
+              1
+            )])]), createVNode(Transition, null, {
+              default: withCtx(() => [collapse.value ? (openBlock(), createBlock(
+                FunctionList,
+                {
+                  key: 0,
+                  "function-lists": unref(renderList),
+                  highlight: searchValue.value,
+                  onItemClick: handleClick
+                },
+                null,
+                8,
+                ["function-lists", "highlight"]
+              )) : createCommentVNode("v-if", true)]),
+              _: 1
+            })])])],
+            64
+          );
         };
       }
     });
+
+    var css_248z = ".v-enter-active,\n.v-leave-active {\n  transition: opacity 0.5s ease;\n  height: 100%;\n}\n.v-enter-from,\n.v-leave-to {\n  opacity: 0;\n  height: 0;\n}\n.pinel-header {\n  margin-top: 8px;\n  font-size: 11px;\n  position: relative;\n  cursor: pointer;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.pinel-header .el-icon {\n  position: absolute;\n  left: -17px;\n  font-size: 14px;\n}\n.function-warper {\n  width: 100%;\n  height: 100%;\n}\n.function-warper .input-warper {\n  font-size: 11px;\n}\n.opearte-warper {\n  padding: 3px 6px;\n  border-radius: 11px;\n  font-size: 11px;\n  min-width: 18px;\n  min-height: 18px;\n  line-height: 11px;\n  font-weight: 400;\n  text-align: center;\n  display: inline-block;\n  box-sizing: border-box;\n  background-color: #4d4d4d;\n  color: #ffffff;\n}\n";
+    styleInject(css_248z);
+
     var App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "D:\\project\\\u4E2A\u4EBA\\\u5DE5\u5177\u5E93\\vueuse-vscode\\package\\views\\search-view\\component\\search-view.vue"]]);
 
     const app = createApp(App);

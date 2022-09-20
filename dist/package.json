@@ -29,7 +29,7 @@
   "engines": {
     "vscode": "^1.67.0"
   },
-  "icon": "public/logo.png",
+  "icon": "public/logo-vscode.png",
   "contributes": {
     "languages": [
       {
@@ -47,8 +47,8 @@
         "title": "预览md文档"
       },
       {
-        "command": "VueUse.search",
-        "title": "检索方法"
+        "command": "VueUse.update-functions",
+        "title": "更新函数"
       },
       {
         "command": "VueUse.refreshEntry",
@@ -74,7 +74,7 @@
         {
           "id": "docshome",
           "title": "VueUse",
-          "icon": "public/logo.svg"
+          "icon": "public/logo-vscode.svg"
         }
       ]
     },
@@ -84,14 +84,14 @@
           "id": "docslibs",
           "type": "webview",
           "name": "函数库",
-          "icon": "public/logo.svg"
+          "icon": "public/logo-vscode.svg"
         }
       ]
     },
     "viewsWelcome": [
       {
         "view": "docslibs",
-        "contents": "暂无数据"
+        "contents": "暂无数据 \n [更新一下](command:VueUse.update-functions)"
       }
     ]
   }

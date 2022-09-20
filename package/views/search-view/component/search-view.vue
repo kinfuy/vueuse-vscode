@@ -37,7 +37,7 @@
     </div>
   </div>
 </template>
-<script lang="ts" setup>
+<script lang="tsx" setup>
 import { computed, ref, toRaw } from 'vue';
 import { ArrowDown, ArrowRight } from '@element-plus/icons-vue';
 import FunctionList from './functionList.vue';
@@ -97,7 +97,7 @@ vscode.postMessage({
 });
 </script>
 
-<style>
+<style lang="less">
 .v-enter-active,
 .v-leave-active {
   transition: opacity 0.5s ease;
