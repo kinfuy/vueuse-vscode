@@ -2,7 +2,7 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "template-vscode-extension",
+      "name": "vueUse",
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
@@ -16,4 +16,3 @@
     }
   ]
 }
-
