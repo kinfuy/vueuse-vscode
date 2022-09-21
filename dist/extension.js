@@ -36,6 +36,12 @@ const registerCommands = (context, registerOptions) => {
   context.subscriptions.push(...commands);
   return commands;
 };
+const registerCompletionItemProvider = (context, registerOptions) => {
+  const completionProvider = registerOptions.map((x) => {
+    return vscode__namespace.languages.registerCompletionItemProvider(x.file, x.provider);
+  });
+  context.subscriptions.push(...completionProvider);
+};
 const registerWebviewViewProvider = (context, viewId, provider) => {
   context.subscriptions.push(
     vscode__namespace.window.registerWebviewViewProvider(viewId, provider)
@@ -199,6 +205,49 @@ const commandOptions = [
   }
 ];
 
+const getResolveCompletionItem = () => {
+  return (item) => {
+    item.documentation = new vscode__namespace.MarkdownString(
+      [
+        "Keep states in the global scope to be reusable across Vue instances.",
+        "```js",
+        `import { ref } from 'vue';`,
+        `import { createGlobalState } from '@vueuse/core`,
+        `const useGlobalState = createGlobalState(() => {
+            const count = ref(0);
+            return { count };
+          });`,
+        "```"
+      ].join("\n")
+    );
+    item.insertText = `createGlobalState(()=>{ return {} })`;
+    return item;
+  };
+};
+const getProvideCompletionItems = () => {
+  return () => {
+    const completionItems = [];
+    completionItems.push(
+      new vscode__namespace.CompletionItem(
+        `createGlobalState`,
+        vscode__namespace.CompletionItemKind.Field
+      )
+    );
+    return completionItems;
+  };
+};
+const getCompletionOptions = () => {
+  return [
+    {
+      file: ["vue", "typescript", "javascript"],
+      provider: {
+        provideCompletionItems: getProvideCompletionItems(),
+        resolveCompletionItem: getResolveCompletionItem()
+      }
+    }
+  ];
+};
+
 async function activate(context) {
   registerCommands(context, commandOptions);
   registerWebviewViewProvider(
@@ -206,6 +255,7 @@ async function activate(context) {
     "docslibs",
     new SearchView(context, "docslibs")
   );
+  registerCompletionItemProvider(context, getCompletionOptions());
 }
 function deactivate() {
 }
