@@ -2,7 +2,7 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var extension = require('./extension-e2edf39c.js');
+var extension = require('./extension-c0d67d22.js');
 require('vscode');
 require('path');
 require('fs/promises');

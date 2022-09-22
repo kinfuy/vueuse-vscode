@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { WebViewProvider } from '../../vscode/webview';
 import { getExtensionFileVscodeResource } from '../../vscode/common';
 import { readDirs } from '../../tools/utils';
-import { docsDir, getDocsUrl } from '../../config/vueuse';
+import { getDocsUrl } from '../../config/vueuse';
 import { fetchJson } from '../../tools/request';
 
 import { docsPath } from '../../config/path';
