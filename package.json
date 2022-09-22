@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.0.9",
+    "node-fetch": "^3.2.10",
     "vue": "^3.2.39"
   },
   "devDependencies": {

@@ -2,6 +2,8 @@ import * as vscode from 'vscode';
 import { WebViewProvider } from '../../vscode/webview';
 import { getExtensionFileVscodeResource } from '../../vscode/common';
 import { readDirs } from '../../tools/utils';
+import { docsDir, getDocsUrl } from '../../config/vueuse';
+import { fetchJson } from '../../tools/request';
 
 import { docsPath } from '../../config/path';
 import { getConfigJson } from '../../tools/file';
@@ -31,6 +33,8 @@ export class SearchView extends WebViewProvider {
   }
   async getFunctions() {
     this.listFunctions = [];
+    const path = getDocsUrl('core', 'createUnrefFn');
+    await fetchJson(`${path}/index.md`);
     const functionFile = await readDirs(docsPath);
     functionFile.forEach(async (file) => {
       const snippets = await getConfigJson(`${docsPath}/${file}/index.json`);

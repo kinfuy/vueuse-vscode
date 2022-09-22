@@ -24,7 +24,8 @@
   "devDependencies": {
     "@types/vscode": "^1.67.0",
     "fast-glob": "^3.2.11",
-    "fs-extra": "^10.1.0"
+    "fs-extra": "^10.1.0",
+    "node-fetch": "^3.2.10"
   },
   "engines": {
     "vscode": "^1.67.0"
