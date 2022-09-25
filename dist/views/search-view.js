@@ -6648,7 +6648,7 @@
       }
     }
 
-    var css_248z$1 = ".function-list {\n  max-height: var(--6a31fab0-warperheight);\n  overflow-y: auto;\n  padding: 0 20px;\n}\n.function-list .functio-item {\n  cursor: pointer;\n  line-height: 24px;\n}\n.function-list .functio-item:hover {\n  background-color: var(--vscode-inputOption-hoverBackground);\n}\n.function-list .functio-item .highlight {\n  background-color: #d0984f;\n}\n";
+    var css_248z$1 = ".function-list {\n  max-height: var(--6a31fab0-warperheight);\n  overflow-y: auto;\n  padding: 0 20px;\n}\n.function-list .functio-item {\n  position: relative;\n  cursor: pointer;\n  line-height: 24px;\n}\n.function-list .functio-item .function-description {\n  font-size: 10px;\n  color: #f4f4f4;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  -webkit-line-clamp: 2;\n  -webkit-box-orient: vertical;\n}\n.function-list .functio-item:hover {\n  background-color: var(--vscode-inputOption-hoverBackground);\n}\n.function-list .functio-item .highlight {\n  background-color: #d0984f;\n}\n";
     styleInject(css_248z$1);
 
     var _export_sfc = (sfc, props) => {

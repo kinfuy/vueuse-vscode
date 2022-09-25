@@ -429,6 +429,14 @@
                     "lastChnage": "last year",
                     "Related": "createSharedComposable",
                     "description": "Keep states in the global scope to be reusable across Vue instances."
+                },
+                {
+                    "name": "createInjectionState",
+                    "category": "State",
+                    "exportSize": "197 B",
+                    "lastChnage": "last year",
+                    "Related": "createSharedComposable",
+                    "description": "Keep states in the global scope to be reusable across Vue instances."
                 }
             ]
         }

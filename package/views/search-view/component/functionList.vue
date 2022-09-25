@@ -57,8 +57,17 @@ onMounted(() => {
   overflow-y: auto;
   padding: 0 20px;
   .functio-item {
+    position: relative;
     cursor: pointer;
     line-height: 24px;
+    .function-description {
+      font-size: 10px;
+      color: #f4f4f4;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
     &:hover {
       background-color: var(--vscode-inputOption-hoverBackground);
     }
