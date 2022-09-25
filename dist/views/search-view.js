@@ -1905,6 +1905,9 @@
             else ;
         }
     }
+    function watchPostEffect(effect, options) {
+        return doWatch(effect, null, ({ flush: 'post' }));
+    }
     // initial value for watchers to trigger on undefined initial values
     const INITIAL_WATCHER_VALUE = {};
     // implementation
@@ -6129,6 +6132,63 @@
         return key in el;
     }
 
+    /**
+     * Runtime helper for SFC's CSS variable injection feature.
+     * @private
+     */
+    function useCssVars(getter) {
+        const instance = getCurrentInstance();
+        /* istanbul ignore next */
+        if (!instance) {
+            return;
+        }
+        const setVars = () => setVarsOnVNode(instance.subTree, getter(instance.proxy));
+        watchPostEffect(setVars);
+        onMounted(() => {
+            const ob = new MutationObserver(setVars);
+            ob.observe(instance.subTree.el.parentNode, { childList: true });
+            onUnmounted(() => ob.disconnect());
+        });
+    }
+    function setVarsOnVNode(vnode, vars) {
+        if (vnode.shapeFlag & 128 /* ShapeFlags.SUSPENSE */) {
+            const suspense = vnode.suspense;
+            vnode = suspense.activeBranch;
+            if (suspense.pendingBranch && !suspense.isHydrating) {
+                suspense.effects.push(() => {
+                    setVarsOnVNode(suspense.activeBranch, vars);
+                });
+            }
+        }
+        // drill down HOCs until it's a non-component vnode
+        while (vnode.component) {
+            vnode = vnode.component.subTree;
+        }
+        if (vnode.shapeFlag & 1 /* ShapeFlags.ELEMENT */ && vnode.el) {
+            setVarsOnNode(vnode.el, vars);
+        }
+        else if (vnode.type === Fragment) {
+            vnode.children.forEach(c => setVarsOnVNode(c, vars));
+        }
+        else if (vnode.type === Static) {
+            let { el, anchor } = vnode;
+            while (el) {
+                setVarsOnNode(el, vars);
+                if (el === anchor)
+                    break;
+                el = el.nextSibling;
+            }
+        }
+    }
+    function setVarsOnNode(el, vars) {
+        if (el.nodeType === 1) {
+            const style = el.style;
+            for (const key in vars) {
+                style.setProperty(`--${key}`, vars[key]);
+            }
+        }
+    }
+
     const TRANSITION = 'transition';
     const ANIMATION = 'animation';
     // DOM Transition is a higher-order-component based on the platform-agnostic
@@ -6588,7 +6648,7 @@
       }
     }
 
-    var css_248z$1 = ".functio-item {\n  cursor: pointer;\n  line-height: 24px;\n}\n.functio-item:hover {\n  background-color: var(--vscode-inputOption-hoverBackground);\n}\n.functio-item .highlight {\n  background-color: #d0984f;\n}\n";
+    var css_248z$1 = ".function-list {\n  max-height: var(--6a31fab0-warperheight);\n  overflow-y: auto;\n  padding: 0 20px;\n}\n.function-list .functio-item {\n  cursor: pointer;\n  line-height: 24px;\n}\n.function-list .functio-item:hover {\n  background-color: var(--vscode-inputOption-hoverBackground);\n}\n.function-list .functio-item .highlight {\n  background-color: #d0984f;\n}\n";
     styleInject(css_248z$1);
 
     var _export_sfc = (sfc, props) => {
@@ -6599,9 +6659,8 @@
       return target;
     };
 
-    const _hoisted_1$1 = { class: "function-list" };
-    const _hoisted_2$1 = ["onClick"];
-    const _hoisted_3$1 = ["innerHTML"];
+    const _hoisted_1$1 = ["onClick"];
+    const _hoisted_2$1 = ["innerHTML"];
     const _sfc_main$1 = /* @__PURE__ */ defineComponent({
       __name: "functionList",
       props: {
@@ -6617,20 +6676,33 @@
       emits: ["item-click"],
       setup(__props, { emit }) {
         const props = __props;
+        useCssVars((_ctx) => ({
+          "6a31fab0-warperheight": warperheight.value
+        }));
         const handleClick = (item) => {
           emit("item-click", item);
         };
         const renderText = (text) => {
           if (props.highlight) {
             return text.replace(
-              new RegExp(`${props.highlight}`, "g"),
-              `<span class="highlight">${props.highlight}</span>`
+              new RegExp(`${props.highlight}`, "gi"),
+              (val) => `<span class="highlight">${val}</span>`
             );
           }
           return text;
         };
+        const warperRef = ref(null);
+        const warperheight = ref("600px");
+        onMounted(() => {
+          const height = document.documentElement.clientHeight || document.body.clientHeight;
+          warperheight.value = `${height - 70}px`;
+        });
         return (_ctx, _cache) => {
-          return openBlock(), createElementBlock("div", _hoisted_1$1, [
+          return openBlock(), createElementBlock("div", {
+            ref_key: "warperRef",
+            ref: warperRef,
+            class: "function-list"
+          }, [
             (openBlock(true), createElementBlock(Fragment, null, renderList(__props.functionLists, (item) => {
               return openBlock(), createElementBlock("div", {
                 key: item.name,
@@ -6639,38 +6711,43 @@
               }, [
                 createBaseVNode("span", {
                   innerHTML: renderText(item.name)
-                }, null, 8, _hoisted_3$1)
-              ], 8, _hoisted_2$1);
+                }, null, 8, _hoisted_2$1)
+              ], 8, _hoisted_1$1);
             }), 128))
-          ]);
+          ], 512);
         };
       }
     });
-    var FunctionList = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__file", "D:\\project\\\u4E2A\u4EBA\\\u5DE5\u5177\u5E93\\vueuse-vscode\\package\\views\\search-view\\component\\functionList.vue"]]);
+    var FunctionList = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__file", "/Users/yangyangyang/Documents/code/vueuse-vscode/package/views/search-view/component/functionList.vue"]]);
 
     const _hoisted_1 = {
-      class: "input-warper"
+      class: "search-view"
     };
     const _hoisted_2 = {
-      class: "function-warper"
+      class: "input-warper"
     };
     const _hoisted_3 = {
-      class: "pinel-collapse"
+      class: "function-warper"
     };
     const _hoisted_4 = {
+      class: "pinel-collapse"
+    };
+    const _hoisted_5 = {
       class: "el-icon"
     };
-    const _hoisted_5 = /* @__PURE__ */ createBaseVNode(
-      "span",
+    const _hoisted_6 = {
+      class: "pinel-title"
+    };
+    const _hoisted_7 = /* @__PURE__ */ createBaseVNode(
+      "div",
       {
-        class: "pinel-title"
+        class: "opearte-warper"
       },
-      "\u51FD\u6570\u5E93",
+      [/* @__PURE__ */ createBaseVNode("span", {
+        class: "operate-item version"
+      }, "v9.2.0")],
       -1
     );
-    const _hoisted_6 = {
-      class: "opearte-warper"
-    };
     var _sfc_main = /* @__PURE__ */ defineComponent({
       __name: "search-view",
       setup(__props) {
@@ -6718,68 +6795,63 @@
           }
         });
         return (_ctx, _cache) => {
-          return openBlock(), createElementBlock(
-            Fragment,
+          return openBlock(), createElementBlock("div", _hoisted_1, [createBaseVNode("div", _hoisted_2, [withDirectives(createBaseVNode(
+            "input",
+            {
+              "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => searchValue.value = $event),
+              class: "search",
+              type: "text",
+              placeholder: "\u641C\u7D22",
+              onInput: handleInput
+            },
             null,
-            [createBaseVNode("div", _hoisted_1, [withDirectives(createBaseVNode(
-              "input",
+            544
+          ), [[vModelText, searchValue.value]]), createBaseVNode(
+            "span",
+            {
+              title: "\u533A\u5206\u5927\u5C0F\u5199",
+              class: normalizeClass(["input-rule", {
+                active: active.value
+              }]),
+              onClick: _cache[1] || (_cache[1] = ($event) => active.value = !active.value)
+            },
+            "Aa",
+            2
+          )]), createBaseVNode("div", _hoisted_3, [createBaseVNode("div", _hoisted_4, [createBaseVNode("div", {
+            class: "pinel-header",
+            onClick: _cache[2] || (_cache[2] = ($event) => collapse.value = !collapse.value)
+          }, [createBaseVNode("span", _hoisted_5, [collapse.value ? (openBlock(), createBlock(unref(arrow_down_default), {
+            key: 0
+          })) : (openBlock(), createBlock(unref(arrow_right_default), {
+            key: 1
+          }))]), createBaseVNode(
+            "span",
+            _hoisted_6,
+            "\u51FD\u6570\u5E93(" + toDisplayString(unref(renderList).length) + ")",
+            1
+          ), _hoisted_7]), createVNode(Transition, null, {
+            default: withCtx(() => [collapse.value ? (openBlock(), createBlock(
+              FunctionList,
               {
-                "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => searchValue.value = $event),
-                class: "search",
-                type: "text",
-                placeholder: "\u641C\u7D22",
-                onInput: handleInput
+                key: 0,
+                "function-lists": unref(renderList),
+                highlight: searchValue.value,
+                onItemClick: handleClick
               },
               null,
-              544
-            ), [[vModelText, searchValue.value]]), createBaseVNode(
-              "span",
-              {
-                title: "\u533A\u5206\u5927\u5C0F\u5199",
-                class: normalizeClass(["input-rule", {
-                  active: active.value
-                }]),
-                onClick: _cache[1] || (_cache[1] = ($event) => active.value = !active.value)
-              },
-              "Aa",
-              2
-            )]), createBaseVNode("div", _hoisted_2, [createBaseVNode("div", _hoisted_3, [createBaseVNode("div", {
-              class: "pinel-header",
-              onClick: _cache[2] || (_cache[2] = ($event) => collapse.value = !collapse.value)
-            }, [createBaseVNode("span", _hoisted_4, [collapse.value ? (openBlock(), createBlock(unref(arrow_down_default), {
-              key: 0
-            })) : (openBlock(), createBlock(unref(arrow_right_default), {
-              key: 1
-            }))]), _hoisted_5, createBaseVNode("div", _hoisted_6, [createBaseVNode(
-              "span",
-              null,
-              toDisplayString(unref(renderList).length),
-              1
-            )])]), createVNode(Transition, null, {
-              default: withCtx(() => [collapse.value ? (openBlock(), createBlock(
-                FunctionList,
-                {
-                  key: 0,
-                  "function-lists": unref(renderList),
-                  highlight: searchValue.value,
-                  onItemClick: handleClick
-                },
-                null,
-                8,
-                ["function-lists", "highlight"]
-              )) : createCommentVNode("v-if", true)]),
-              _: 1
-            })])])],
-            64
-          );
+              8,
+              ["function-lists", "highlight"]
+            )) : createCommentVNode("v-if", true)]),
+            _: 1
+          })])])]);
         };
       }
     });
 
-    var css_248z = ".v-enter-active,\n.v-leave-active {\n  transition: opacity 0.5s ease;\n  height: 100%;\n}\n.v-enter-from,\n.v-leave-to {\n  opacity: 0;\n  height: 0;\n}\n.pinel-header {\n  margin-top: 8px;\n  font-size: 11px;\n  position: relative;\n  cursor: pointer;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.pinel-header .el-icon {\n  position: absolute;\n  left: -17px;\n  font-size: 14px;\n}\n.function-warper {\n  width: 100%;\n  height: 100%;\n}\n.function-warper .input-warper {\n  font-size: 11px;\n}\n.opearte-warper {\n  padding: 3px 6px;\n  border-radius: 11px;\n  font-size: 11px;\n  min-width: 18px;\n  min-height: 18px;\n  line-height: 11px;\n  font-weight: 400;\n  text-align: center;\n  display: inline-block;\n  box-sizing: border-box;\n  background-color: #4d4d4d;\n  color: #ffffff;\n}\n";
+    var css_248z = "body {\n  padding: 0;\n}\n.v-enter-active,\n.v-leave-active {\n  transition: opacity 0.5s ease;\n  height: 100%;\n}\n.v-enter-from,\n.v-leave-to {\n  opacity: 0;\n  height: 0;\n}\n.search-view {\n  font-size: 11px;\n}\n.search-view .input-warper {\n  margin: 0 20px;\n}\n.search-view .function-warper {\n  width: 100%;\n  box-sizing: border-box;\n}\n.search-view .function-warper .pinel-header {\n  font-size: 11px;\n  position: relative;\n  cursor: pointer;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin: 8px 20px 0 20px;\n}\n.search-view .function-warper .pinel-header .el-icon {\n  position: absolute;\n  left: -17px;\n  font-size: 14px;\n}\n.search-view .function-warper .opearte-warper .operate-item {\n  padding: 3px 6px;\n  border-radius: 11px;\n  font-size: 11px;\n  min-width: 18px;\n  min-height: 18px;\n  line-height: 11px;\n  font-weight: 400;\n  text-align: center;\n  display: inline-block;\n  box-sizing: border-box;\n  background-color: #4d4d4d;\n  color: #ffffff;\n}\n";
     styleInject(css_248z);
 
-    var App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "D:\\project\\\u4E2A\u4EBA\\\u5DE5\u5177\u5E93\\vueuse-vscode\\package\\views\\search-view\\component\\search-view.vue"]]);
+    var App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "/Users/yangyangyang/Documents/code/vueuse-vscode/package/views/search-view/component/search-view.vue"]]);
 
     const app = createApp(App);
     app.mount("#app");

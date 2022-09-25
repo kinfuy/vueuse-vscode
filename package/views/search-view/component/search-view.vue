@@ -1,39 +1,41 @@
 <template>
-  <div class="input-warper">
-    <input
-      v-model="searchValue"
-      class="search"
-      type="text"
-      placeholder="搜索"
-      @input="handleInput"
-    />
-    <span
-      title="区分大小写"
-      :class="['input-rule', { active: active }]"
-      @click="active = !active"
-      >Aa</span
-    >
-  </div>
-  <div class="function-warper">
-    <div class="pinel-collapse">
-      <div class="pinel-header" @click="collapse = !collapse">
-        <span class="el-icon">
-          <ArrowDown v-if="collapse" />
-          <ArrowRight v-else />
-        </span>
-        <span class="pinel-title">函数库</span>
-        <div class="opearte-warper">
-          <span>{{ renderList.length }}</span>
+  <div class="search-view">
+    <div class="input-warper">
+      <input
+        v-model="searchValue"
+        class="search"
+        type="text"
+        placeholder="搜索"
+        @input="handleInput"
+      />
+      <span
+        title="区分大小写"
+        :class="['input-rule', { active: active }]"
+        @click="active = !active"
+        >Aa</span
+      >
+    </div>
+    <div class="function-warper">
+      <div class="pinel-collapse">
+        <div class="pinel-header" @click="collapse = !collapse">
+          <span class="el-icon">
+            <ArrowDown v-if="collapse" />
+            <ArrowRight v-else />
+          </span>
+          <span class="pinel-title">函数库({{ renderList.length }})</span>
+          <div class="opearte-warper">
+            <span class="operate-item version">v9.2.0</span>
+          </div>
         </div>
+        <Transition>
+          <FunctionList
+            v-if="collapse"
+            :function-lists="renderList"
+            :highlight="searchValue"
+            @item-click="handleClick"
+          />
+        </Transition>
       </div>
-      <Transition>
-        <FunctionList
-          v-if="collapse"
-          :function-lists="renderList"
-          :highlight="searchValue"
-          @item-click="handleClick"
-        />
-      </Transition>
     </div>
   </div>
 </template>
@@ -98,6 +100,9 @@ vscode.postMessage({
 </script>
 
 <style lang="less">
+body {
+  padding: 0;
+}
 .v-enter-active,
 .v-leave-active {
   transition: opacity 0.5s ease;
@@ -109,40 +114,45 @@ vscode.postMessage({
   opacity: 0;
   height: 0;
 }
-.pinel-header {
-  margin-top: 8px;
-  font-size: 11px;
-  position: relative;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.pinel-header .el-icon {
-  position: absolute;
-  left: -17px;
-  font-size: 14px;
-}
-.function-warper {
-  width: 100%;
-  height: 100%;
-}
 
-.function-warper .input-warper {
+.search-view {
   font-size: 11px;
-}
-.opearte-warper {
-  padding: 3px 6px;
-  border-radius: 11px;
-  font-size: 11px;
-  min-width: 18px;
-  min-height: 18px;
-  line-height: 11px;
-  font-weight: 400;
-  text-align: center;
-  display: inline-block;
-  box-sizing: border-box;
-  background-color: rgb(77, 77, 77);
-  color: rgb(255, 255, 255);
+  .input-warper {
+    margin: 0 20px;
+  }
+  .function-warper {
+    width: 100%;
+    box-sizing: border-box;
+    .pinel-header {
+      font-size: 11px;
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 8px 20px 0 20px;
+    }
+    .pinel-header .el-icon {
+      position: absolute;
+      left: -17px;
+      font-size: 14px;
+    }
+    .opearte-warper {
+      .operate-item {
+        padding: 3px 6px;
+        border-radius: 11px;
+        font-size: 11px;
+        min-width: 18px;
+        min-height: 18px;
+        line-height: 11px;
+        font-weight: 400;
+        text-align: center;
+        display: inline-block;
+        box-sizing: border-box;
+        background-color: rgb(77, 77, 77);
+        color: rgb(255, 255, 255);
+      }
+    }
+  }
 }
 </style>

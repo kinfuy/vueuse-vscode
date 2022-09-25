@@ -1,12 +1,11 @@
+import { resolve } from 'path';
 import * as vscode from 'vscode';
 import { WebViewProvider } from '../../vscode/webview';
 import { getExtensionFileVscodeResource } from '../../vscode/common';
 import { readDirs } from '../../tools/utils';
-import { getDocsUrl } from '../../config/vueuse';
-import { fetchJson } from '../../tools/request';
-
 import { docsPath } from '../../config/path';
 import { getConfigJson } from '../../tools/file';
+import { errorTip } from '../../vscode/tips';
 import type { HandleMap } from '../../vscode/webview';
 import type { FunctionInfo } from '../../tools/file';
 
@@ -16,8 +15,8 @@ export class SearchView extends WebViewProvider {
     super(ctx, {
       viewType,
       stylePath: [
-        getExtensionFileVscodeResource(ctx, 'style/search-view.css'),
-        getExtensionFileVscodeResource(ctx, 'style/bundle.css')
+        getExtensionFileVscodeResource(ctx, 'style/search-view.css')
+        // getExtensionFileVscodeResource(ctx, 'style/bundle.css')
       ],
       scriptPath: [getExtensionFileVscodeResource(ctx, 'views/search-view.js')]
     });
@@ -33,12 +32,17 @@ export class SearchView extends WebViewProvider {
   }
   async getFunctions() {
     this.listFunctions = [];
-    const path = getDocsUrl('core', 'createUnrefFn');
-    await fetchJson(`${path}/index.md`);
-    const functionFile = await readDirs(docsPath);
-    functionFile.forEach(async (file) => {
-      const snippets = await getConfigJson(`${docsPath}/${file}/index.json`);
-      snippets && this.listFunctions.push(snippets);
+    const functionFile = await getConfigJson(
+      resolve(`${docsPath}/config.json`)
+    );
+    if (!functionFile) {
+      errorTip('配置文件不存在，请更新');
+      return;
+    }
+    functionFile.dirs.forEach((x) => {
+      if (x.functions) {
+        this.listFunctions.push(...x.functions);
+      }
     });
   }
 }

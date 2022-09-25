@@ -17,11 +17,11 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.0.9",
-    "node-fetch": "^3.2.10",
+    "node-fetch": "^2.6.7",
     "vue": "^3.2.39"
   },
   "devDependencies": {
-    "@alqmc/build-ts": "^0.0.8",
+    "@alqmc/build-ts": "^0.0.9",
     "@alqmc/build-utils": "^0.0.5",
     "@alqmc/build-vue": "^0.0.7",
     "@alqmc/eslint-config": "^0.0.4",
@@ -33,6 +33,7 @@
     "@types/gulp-autoprefixer": "^0.0.33",
     "@types/gulp-clean-css": "^4.3.0",
     "@types/gulp-less": "^0.0.32",
+    "@types/node-fetch": "^2.6.2",
     "@types/vscode": "^1.67.0",
     "@vitejs/plugin-vue-jsx": "^2.0.1",
     "changeloger": "0.1.0",

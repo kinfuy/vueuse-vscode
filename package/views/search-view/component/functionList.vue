@@ -1,5 +1,5 @@
 <template>
-  <div class="function-list">
+  <div ref="warperRef" class="function-list">
     <div
       v-for="item in functionLists"
       :key="item.name"
@@ -11,6 +11,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { onMounted, ref } from 'vue';
 import type { PropType } from 'vue';
 import type { FunctionInfo } from '../../../tools/file';
 
@@ -34,22 +35,36 @@ const handleClick = (item: FunctionInfo) => {
 const renderText = (text: string) => {
   if (props.highlight) {
     return text.replace(
-      new RegExp(`${props.highlight}`, 'g'),
-      `<span class="highlight">${props.highlight}</span>`
+      new RegExp(`${props.highlight}`, 'gi'),
+      (val) => `<span class="highlight">${val}</span>`
     );
   }
   return text;
 };
+
+const warperRef = ref(null);
+const warperheight = ref('600px');
+
+onMounted(() => {
+  const height =
+    document.documentElement.clientHeight || document.body.clientHeight;
+  warperheight.value = `${height - 70}px`;
+});
 </script>
 <style lang="less">
-.functio-item {
-  cursor: pointer;
-  line-height: 24px;
-  &:hover {
-    background-color: var(--vscode-inputOption-hoverBackground);
-  }
-  .highlight {
-    background-color: rgb(208, 152, 79);
+.function-list {
+  max-height: v-bind(warperheight);
+  overflow-y: auto;
+  padding: 0 20px;
+  .functio-item {
+    cursor: pointer;
+    line-height: 24px;
+    &:hover {
+      background-color: var(--vscode-inputOption-hoverBackground);
+    }
+    .highlight {
+      background-color: rgb(208, 152, 79);
+    }
   }
 }
 </style>

@@ -1,0 +1,436 @@
+{
+    "name": "vueuse",
+    "description": "描述vueuse函数放置目录",
+    "version": "9.2.0",
+    "dirs": [
+        {
+            "name": "core",
+            "functions": [
+                {
+                    "name": "computedAsync"
+                },
+                {
+                    "name": "computedInject"
+                },
+                {
+                    "name": "createUnrefFn"
+                },
+                {
+                    "name": "onClickOutside"
+                },
+                {
+                    "name": "onKeyStroke"
+                },
+                {
+                    "name": "onLongPress"
+                },
+                {
+                    "name": "onStartTyping"
+                },
+                {
+                    "name": "templateRef"
+                },
+                {
+                    "name": "unrefElement"
+                },
+                {
+                    "name": "useActiveElement"
+                },
+                {
+                    "name": "useAsyncQueue"
+                },
+                {
+                    "name": "useAsyncState"
+                },
+                {
+                    "name": "useBase64"
+                },
+                {
+                    "name": "useBluetooth"
+                },
+                {
+                    "name": "useBreakpoints"
+                },
+                {
+                    "name": "useBroadcastChannel"
+                },
+                {
+                    "name": "useBrowserLocation"
+                },
+                {
+                    "name": "useCached"
+                },
+                {
+                    "name": "useClipboard"
+                },
+                {
+                    "name": "useCloned"
+                },
+                {
+                    "name": "useColorMode"
+                },
+                {
+                    "name": "useConfirmDialog"
+                },
+                {
+                    "name": "useCssVars"
+                },
+                {
+                    "name": "useCurrentElement"
+                },
+                {
+                    "name": "useCycleList"
+                },
+                {
+                    "name": "useDark"
+                },
+                {
+                    "name": "useDebouncedRefHistory"
+                },
+                {
+                    "name": "useDeviceMotion"
+                },
+                {
+                    "name": "useDeviceOrientation"
+                },
+                {
+                    "name": "useDevicePixelRatio"
+                },
+                {
+                    "name": "useDevicesList"
+                },
+                {
+                    "name": "useDisplayMedia"
+                },
+                {
+                    "name": "useDocumentVisibilitys"
+                },
+                {
+                    "name": "useDraggable"
+                },
+                {
+                    "name": "useDropZone"
+                },
+                {
+                    "name": "useElementBounding"
+                },
+                {
+                    "name": "useElementByPoints"
+                },
+                {
+                    "name": "useElementHover"
+                },
+                {
+                    "name": "useElementSize"
+                },
+                {
+                    "name": "useElementVisibility"
+                },
+                {
+                    "name": "useEventBus"
+                },
+                {
+                    "name": "useEventListener"
+                },
+                {
+                    "name": "useEventSource"
+                },
+                {
+                    "name": "useEyeDropper"
+                },
+                {
+                    "name": "useFavicon"
+                },
+                {
+                    "name": "useFetch"
+                },
+                {
+                    "name": "useFileDialog"
+                },
+                {
+                    "name": "useFileSystemAccess"
+                },
+                {
+                    "name": "useFocus"
+                },
+                {
+                    "name": "useFocusWithin"
+                },
+                {
+                    "name": "useFps"
+                },
+                {
+                    "name": "useFullscreen"
+                },
+                {
+                    "name": "useGamepad"
+                },
+                {
+                    "name": "useGeolocation"
+                },
+                {
+                    "name": "useIdle"
+                },
+                {
+                    "name": "useImage"
+                },
+                {
+                    "name": "useInfiniteScroll"
+                },
+                {
+                    "name": "useIntersectionObserver"
+                },
+                {
+                    "name": "useKeyModifier"
+                },
+                {
+                    "name": "useLocalStorage"
+                },
+                {
+                    "name": "useMagicKeys"
+                },
+                {
+                    "name": "useManualRefHistory"
+                },
+                {
+                    "name": "useMediaControls"
+                },
+                {
+                    "name": "useMediaQuery"
+                },
+                {
+                    "name": "useMemoize"
+                },
+                {
+                    "name": "useMemory"
+                },
+                {
+                    "name": "useMounted"
+                },
+                {
+                    "name": "useMouse"
+                },
+                {
+                    "name": "useMouseInElement"
+                },
+                {
+                    "name": "useMousePressed"
+                },
+                {
+                    "name": "useMutationObserver"
+                },
+                {
+                    "name": "useNavigatorLanguage"
+                },
+                {
+                    "name": "useNetwork"
+                },
+                {
+                    "name": "useNow"
+                },
+                {
+                    "name": "useObjectUrl"
+                },
+                {
+                    "name": "useOffsetPagination"
+                },
+                {
+                    "name": "useOnlines"
+                },
+                {
+                    "name": "usePageLeave"
+                },
+                {
+                    "name": "useParallax"
+                },
+                {
+                    "name": "usePermission"
+                },
+                {
+                    "name": "usePointer"
+                },
+                {
+                    "name": "usePointerSwipe"
+                },
+                {
+                    "name": "usePreferredColorScheme"
+                },
+                {
+                    "name": "usePreferredContrast"
+                },
+                {
+                    "name": "usePreferredDarks"
+                },
+                {
+                    "name": "usePreferredLanguages"
+                },
+                {
+                    "name": "usePreferredReducedMotion"
+                },
+                {
+                    "name": "useRafFn"
+                },
+                {
+                    "name": "useRefHistory"
+                },
+                {
+                    "name": "useResizeObserver"
+                },
+                {
+                    "name": "useScreenOrientation"
+                },
+                {
+                    "name": "useScreenSafeArea"
+                },
+                {
+                    "name": "useScriptTag"
+                },
+                {
+                    "name": "useScroll"
+                },
+                {
+                    "name": "useScrollLock"
+                },
+                {
+                    "name": "useSessionStorages"
+                },
+                {
+                    "name": "useShare"
+                },
+                {
+                    "name": "useSpeechRecognitions"
+                },
+                {
+                    "name": "useSpeechSynthesiss"
+                },
+                {
+                    "name": "useStepper"
+                },
+                {
+                    "name": "useStorage"
+                },
+                {
+                    "name": "useStorageAsync"
+                },
+                {
+                    "name": "useStyleTags"
+                },
+                {
+                    "name": "useSupporteds"
+                },
+                {
+                    "name": "useSwipes"
+                },
+                {
+                    "name": "useTemplateRefsList"
+                },
+                {
+                    "name": "useTextareaAutosize"
+                },
+                {
+                    "name": "useTextDirection"
+                },
+                {
+                    "name": "useTextSelectionsd"
+                },
+                {
+                    "name": "useThrottledRefHistory"
+                },
+                {
+                    "name": "useTimeAgo"
+                },
+                {
+                    "name": "useTimeoutPoll"
+                },
+                {
+                    "name": "useTimestamp"
+                },
+                {
+                    "name": "useTitle"
+                },
+                {
+                    "name": "useTransitions"
+                },
+                {
+                    "name": "useUrlSearchParamss"
+                },
+                {
+                    "name": "useUserMedias"
+                },
+                {
+                    "name": "useVibrate"
+                },
+                {
+                    "name": "useVirtualList"
+                },
+                {
+                    "name": "useVModel"
+                },
+                {
+                    "name": "useVModels"
+                },
+                {
+                    "name": "useWakeLock"
+                },
+                {
+                    "name": "useWebNotification"
+                },
+                {
+                    "name": "useWebSocket"
+                },
+                {
+                    "name": "useWebWorker"
+                },
+                {
+                    "name": "useWebWorkerFn"
+                },
+                {
+                    "name": "useWindowFocus"
+                },
+                {
+                    "name": "useWindowScroll"
+                },
+                {
+                    "name": "useWindowSize"
+                }
+            ]
+        },
+        {
+            "name": "electron",
+            "functions": []
+        },
+        {
+            "name": "firebase",
+            "functions": []
+        },
+        {
+            "name": "integrations",
+            "functions": []
+        },
+        {
+            "name": "router",
+            "functions": []
+        },
+        {
+            "name": "rxjs",
+            "functions": []
+        },
+        {
+            "name": "rxjs",
+            "functions": []
+        },
+        {
+            "name": "shared",
+            "functions": [
+                {
+                    "name": "createGlobalState",
+                    "category": "State",
+                    "exportSize": "197 B",
+                    "lastChnage": "last year",
+                    "Related": "createSharedComposable",
+                    "description": "Keep states in the global scope to be reusable across Vue instances."
+                }
+            ]
+        }
+    ]
+}

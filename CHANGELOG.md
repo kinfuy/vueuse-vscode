@@ -1,0 +1,11 @@
+## What's Changed
+  - Feat: init project (9115877)
+  - Feat: search (2aad170)
+  - Fix: webview (e1a0d5a)
+  - Fix: detail (d12ce85)
+  - Fix: detail (640f3e4)
+  - Fix: detail (ab61b10)
+  - Fix: completionItem (5b24332)
+  - Fix: deatil (6a1565e)
+  - Fix: deatil (4628903)
+  - Docs: update (9e0dfcf)
