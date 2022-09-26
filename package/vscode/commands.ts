@@ -1,4 +1,4 @@
-const commands = [
+export const commands = [
   'noop',
   '_provideDocumentSemanticTokensLegend',
   '_provideDocumentSemanticTokens',
