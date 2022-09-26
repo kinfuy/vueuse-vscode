@@ -209,7 +209,7 @@ class MessageServer {
 
 const previewMdFile = async (options) => {
   const path$1 = vscode__namespace.Uri.file(path.resolve(docsPath, `${options.name}/index.md`));
-  await vscode__namespace.commands.executeCommand("markdown.showPreviewToSide", path$1);
+  await vscode__namespace.commands.executeCommand("markdown.showPreview", path$1);
 };
 
 var publicApi = {};
