@@ -6,7 +6,7 @@
 
 ### WHY DO THIS
 
-官方仓库似乎无人维护了，并且是半成品!!
+官方仓库似乎无人维护了!!
 
 > 官方地址 [VueUse Documentation at Your Fingertips](https://github.com/vueuse/vscode-vueuse)
 
