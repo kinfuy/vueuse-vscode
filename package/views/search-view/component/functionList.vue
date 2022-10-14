@@ -3,7 +3,7 @@
     <div
       v-for="item in functionLists"
       :key="item.name"
-      class="functio-item"
+      :class="['functio-item', { active: select === item.name }]"
       @click="handleClick(item)"
     >
       <span v-html="renderText(item.name)"></span>
@@ -26,9 +26,12 @@ const props = defineProps({
   }
 });
 
+const select = ref();
+
 const emit = defineEmits(['item-click']);
 
 const handleClick = (item: FunctionInfo) => {
+  select.value = item.name;
   emit('item-click', item);
 };
 
@@ -69,6 +72,9 @@ onMounted(() => {
       -webkit-box-orient: vertical;
     }
     &:hover {
+      background-color: var(--vscode-inputOption-hoverBackground);
+    }
+    &.active {
       background-color: var(--vscode-inputOption-hoverBackground);
     }
     .highlight {
