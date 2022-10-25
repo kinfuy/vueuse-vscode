@@ -5,9 +5,9 @@ module.exports = {
     perf: { title: 'Performance Improvements' },
     fix: { title: 'Bug Fixes' },
     refactor: { title: 'Code Refactoring' },
-    docs: { title: 'ocumentation' },
+    docs: { title: 'ocumentation' }
   },
   showContributors: false,
   showNotMatchComiit: false,
-  repository: '',
+  repository: ''
 };

@@ -6648,7 +6648,7 @@
       }
     }
 
-    var css_248z$1 = ".function-list {\n  max-height: var(--6a31fab0-warperheight);\n  overflow-y: auto;\n  padding: 0 20px;\n}\n.function-list .functio-item {\n  position: relative;\n  cursor: pointer;\n  line-height: 24px;\n}\n.function-list .functio-item .function-description {\n  font-size: 10px;\n  color: #f4f4f4;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  -webkit-line-clamp: 2;\n  -webkit-box-orient: vertical;\n}\n.function-list .functio-item:hover {\n  background-color: var(--vscode-inputOption-hoverBackground);\n}\n.function-list .functio-item .highlight {\n  background-color: #d0984f;\n}\n";
+    var css_248z$1 = ".function-list {\n  max-height: var(--6a31fab0-warperheight);\n  overflow-y: auto;\n  padding: 0 20px;\n}\n.function-list .functio-item {\n  position: relative;\n  cursor: pointer;\n  line-height: 24px;\n}\n.function-list .functio-item .function-description {\n  font-size: 10px;\n  color: #f4f4f4;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  -webkit-line-clamp: 2;\n  -webkit-box-orient: vertical;\n}\n.function-list .functio-item:hover {\n  background-color: var(--vscode-inputOption-hoverBackground);\n}\n.function-list .functio-item.active {\n  background-color: var(--vscode-inputOption-hoverBackground);\n}\n.function-list .functio-item .highlight {\n  background-color: #d0984f;\n}\n";
     styleInject(css_248z$1);
 
     var _export_sfc = (sfc, props) => {
@@ -6679,7 +6679,9 @@
         useCssVars((_ctx) => ({
           "6a31fab0-warperheight": warperheight.value
         }));
+        const select = ref();
         const handleClick = (item) => {
+          select.value = item.name;
           emit("item-click", item);
         };
         const renderText = (text) => {
@@ -6706,19 +6708,19 @@
             (openBlock(true), createElementBlock(Fragment, null, renderList(__props.functionLists, (item) => {
               return openBlock(), createElementBlock("div", {
                 key: item.name,
-                class: "functio-item",
+                class: normalizeClass(["functio-item", { active: select.value === item.name }]),
                 onClick: ($event) => handleClick(item)
               }, [
                 createBaseVNode("span", {
                   innerHTML: renderText(item.name)
                 }, null, 8, _hoisted_2$1)
-              ], 8, _hoisted_1$1);
+              ], 10, _hoisted_1$1);
             }), 128))
           ], 512);
         };
       }
     });
-    var FunctionList = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__file", "/Users/yangyangyang/Documents/code/vueuse-vscode/package/views/search-view/component/functionList.vue"]]);
+    var FunctionList = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__file", "D:\\project\\\u4E2A\u4EBA\\\u5DE5\u5177\u5E93\\vueuse-vscode\\package\\views\\search-view\\component\\functionList.vue"]]);
 
     const _hoisted_1 = {
       class: "search-view"
@@ -6851,7 +6853,7 @@
     var css_248z = "body {\n  padding: 0;\n}\n.v-enter-active,\n.v-leave-active {\n  transition: opacity 0.5s ease;\n  height: 100%;\n}\n.v-enter-from,\n.v-leave-to {\n  opacity: 0;\n  height: 0;\n}\n.search-view {\n  font-size: 11px;\n}\n.search-view .input-warper {\n  margin: 0 20px;\n}\n.search-view .function-warper {\n  width: 100%;\n  box-sizing: border-box;\n}\n.search-view .function-warper .pinel-header {\n  font-size: 11px;\n  position: relative;\n  cursor: pointer;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin: 8px 20px 0 20px;\n}\n.search-view .function-warper .pinel-header .el-icon {\n  position: absolute;\n  left: -17px;\n  font-size: 14px;\n}\n.search-view .function-warper .opearte-warper .operate-item {\n  padding: 3px 6px;\n  border-radius: 11px;\n  font-size: 11px;\n  min-width: 18px;\n  min-height: 18px;\n  line-height: 11px;\n  font-weight: 400;\n  text-align: center;\n  display: inline-block;\n  box-sizing: border-box;\n  background-color: #4d4d4d;\n  color: #ffffff;\n}\n";
     styleInject(css_248z);
 
-    var App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "/Users/yangyangyang/Documents/code/vueuse-vscode/package/views/search-view/component/search-view.vue"]]);
+    var App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "D:\\project\\\u4E2A\u4EBA\\\u5DE5\u5177\u5E93\\vueuse-vscode\\package\\views\\search-view\\component\\search-view.vue"]]);
 
     const app = createApp(App);
     app.mount("#app");

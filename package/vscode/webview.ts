@@ -26,6 +26,8 @@ export class WebViewProvider implements vscode.WebviewViewProvider {
     this._ctx = context;
   }
 
+  //  `resolveWebviewView` is called when a view first becomes visible. This may happen when the view is
+  //  first loaded or when the user hides and then shows a view again.
   public resolveWebviewView(webviewView: vscode.WebviewView) {
     this.view = webviewView;
 

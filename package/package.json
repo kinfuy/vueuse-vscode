@@ -1,10 +1,12 @@
 {
-  "name": "VueUse",
-  "version": "0.0.1",
+  "name": "vueuse-helper",
+  "version": "0.0.2",
   "description": "VueUse tooling for VS Code",
   "keywords": [
     "vscode",
-    "extension"
+    "extension",
+    "vueuse",
+    "helper"
   ],
   "license": "MIT",
   "author": "alqmc",
